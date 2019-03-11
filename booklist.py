@@ -17,8 +17,8 @@ This program is intended to:
 
 INSTRUCTIONS FOR USE OF THIS PROGRAM VIA THE MAC TERMINAL:
 1. Open Terminal from Spotlight search.
-2. Type in cd desktop
-3. Type in python booklist.py
+2. cd into wherever you saved the booklist.py file
+3. Type in python3 booklist.py
 
 UPDATE: September 29, 2018
 All original objectives have been fulfilled, and extensive testing has been successful.
@@ -40,7 +40,7 @@ UPDATE: March 10, 2019
 """
 from time import sleep
 
-# Variable holds instructions on what the user should check if the book they are searching for does not exist in the Book List
+# Troubleshooting instructions for user if book query doesn't exist
 book_does_not_exist = """Sorry, this book does not exist in the Book List. Please check the following:
 >>> Spelling, capitalization, and spacing 
 	DO NOT type: the h8 Ugive
@@ -56,7 +56,13 @@ book_does_not_exist = """Sorry, this book does not exist in the Book List. Pleas
 """
 
 def new_title(purpose):
-	# This function allows for a new title to be added. 
+	'''
+	Deals with the user inputting the title of a book
+
+	purpose: string, the purpose of the function ('retrieve', 'update', or 'new')
+
+	Returns title of book from user input, formatted in a way so that the program can use the information
+	''' 
 
 	# Variable used for continuous check of data entered. 
 	enter_title = True	
@@ -78,6 +84,7 @@ def new_title(purpose):
 					title = title[4:] + ", The"
 
 				return title
+
 	# Checks if the new_title function is being used to add a new book. If so, it DOES need to check if the title already occurs. 
 	elif purpose == "new":
 		while enter_title == True:
@@ -88,12 +95,7 @@ def new_title(purpose):
 				print("Sorry, you did not enter a title of the book.")
 			# Checks if user is inputting a title that already exists
 			elif title in book_list_dict:
-				print("Sorry, you are entering a new book that already exists in the Book List.")
-				sleep(1)
-				print("Please type in the title of a NEW book. If you were trying to edit the existing book, choose option 3 in the MAIN MENU.")
-				# Returns to MAIN MENU
-				enter_title = False
-				return None 
+				print("Sorry, you are entering a new book that already exists in the Book List. Please type in the title of a NEW book.")
 			else:
 				# Exits enter title while loop
 				enter_title = False
@@ -121,30 +123,21 @@ def new_author():
 			return author
  
 def new_rating():
-	# This function allows for a new rating to be added. 
+	'''
+	Lets new rating of book to be added
+	Returns rating, an int from 0-5
+	'''
 
-	# Variable used for continuous check of data entered. 
-	enter_rating = True
-	while enter_rating == True:
-		# Asks user for the rating of the book
-		rating = input("Rating (out of 5 stars): ")
-		# Checks if user has inputted anything
-		if len(rating) == 0:
-			print("Sorry, you did not enter a rating of the book.")
-			# Checks if the user has inputted an integer.
-		if rating.isdigit() == False:
-			print("Please enter an integer between 0 and 5.")
-		# Checks if user has inputted a string that is completely digits.
-		# Thus, any negative values or floats will not be accepted.
-		if rating.isdigit() == True:
-			# Checks if user has inputted a rating that is greater than 5.
-			if int(rating) > 5:
-				print("Sorry, you entered a rating greater than 5. Please enter an integer between 0 and 5.")
-			# Checks if user has inputted an integer between 0 and 5. 
-			if int(rating) <= 5:
-				# Exits rating while loop
-				enter_rating = False
-				return rating
+	while True:
+		try:
+			rating = int(input("Rating (out of 5 stars): "))
+			assert type(rating) == int and rating <= 5 and rating >= 0
+		except ValueError:
+			print("Error, please enter an integer.")
+		except AssertionError:
+			print("Error, please enter an integer between 0 and 5.")
+		else:
+			return rating
 
 def new_book():
 	# This function takes in user input and organizes it, as described in objectives 1 and 2.
@@ -153,20 +146,17 @@ def new_book():
 
 	# Asks the user for the title, author, and rating.
 	title = new_title("new")
+	author = new_author()
+	rating = new_rating()
 
-	# Checks if user inputted a title that did not exist (new_title function returns None if this is true)
-	# If not, they can continue adding the author and rating
-	if title != None:
-		author = new_author()
-		rating = new_rating()
+	#Adds the title, author, and rating to the book_list_dict dictionary.
+	book_list_dict[title] = [author, rating]
 
-		#Adds the title, author, and rating to the book_list_dict dictionary.
-		book_list_dict[title] = [author, rating]
+	#Confirmation message
+	sleep(1)
+	print("The book %s by %s has been added. The rating is %s out of 5 stars." % (title.upper(), author.upper(), rating))
 
-		#Confirmation message
-		sleep(1)
-		print("The book %s by %s has been added. The rating is %s out of 5 stars." % (title.upper(), author.upper(), rating))
-
+### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def retrieve_info():
 	# This function retrieves values as described in objective 3, and prints it as described in objective 4.
 	
