@@ -34,9 +34,27 @@ UPDATE: September 30, 2018
 Fixed errors brought up by parents testing yesterday. Updated credits and other features.
 
 UPDATE: March 10, 2019
--Be able to write and read .txt files for booklist
--Use book class
--Use try, except
+NEW ADDITIONAL OBJECTIVES:
+1. Use try, except
+2. Be able to write and read .txt files for booklist
+3. Use book class
+
+UPDATE: March 13, 2019
+-Currently working on N.A.O. #1
+NEW ADDITIONAL OBJECTIVES:
+4. Update retrieve_rating and retrieve_author
+	-Combine helper functions into one retrieve function
+	-Move troublingshooting instructions and check if book in book_list_dict into that retrieve function
+	to avoid repetitive code
+5. Make print_all_books more aesthetic
+6. Once classes implemented:
+	-Book IDs
+	-Genres
+	-Avg. rating function for genre, author
+	-CLASSES (by inheritance?):
+		-Book
+			-Author?
+			-Genre?
 """
 from time import sleep
 
@@ -156,7 +174,6 @@ def new_book():
 	sleep(1)
 	print("The book %s by %s has been added. The rating is %s out of 5 stars." % (title.upper(), author.upper(), rating))
 
-### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def retrieve_info():
 	# This function retrieves values as described in objective 3, and prints it as described in objective 4.
 	
@@ -170,21 +187,18 @@ def retrieve_info():
 	5. Update any incorrect information. 
 """
 
-	# Variable used to stay/switch between menus.
-	retrieve_info = True
-
 	print("You have chosen option 2, to retrieve information about an existing book.")
 
-	# Checks if the book_list_dict is empty; if it is, it prompts the user to add a book before proceeding.
-	if len(book_list_dict) == 0:
-		# Exits out of RETRIEVE INFO MENU
-		retrieve_info = False
+	try:
+		# book_list_dict must exist (have at least 1 entry)
+		assert book_list_dict
+	except AssertionError:
 		print("Sorry, there are currently no books in the list. Please add at least 1 book before retrieving information.")
-
-	# While loop, condition checks if user should still be in the RETRIEVE INFO MENU. 
-	while retrieve_info == True:
-		sleep(1)
-		print("""
+	else:
+		while True:
+			try:
+				sleep(1)
+				print("""
 	--- RETRIEVE INFO MENU ---
 	Would you like to:
 		(1) Retrieve the RATING of a book
@@ -193,95 +207,80 @@ def retrieve_info():
 
 		(4) Return to MAIN MENU
 		""")
+				# Asks user about what they want to retrieve OR return to main menu.
+				user_input = input("Enter 1, 2, 3, or 4: ")
 
-		# Asks user about what they want to retrieve OR return to main menu.
-		user_wants_retrieve = input("Enter 1, 2, 3, or 4: ")
+				acceptable_input = ['1', '2', '3', '4']
+				assert user_input in acceptable_input
 
-		# Option 1: Retrieves the RATING of a book
-		if user_wants_retrieve == "1":
-			print("You have chosen option 1, to retrieve the RATING of a book.")
-			# Asks user to enter the title of the book
-			book = new_title("retrieve")
-
-			# Checks if the title requested is in the dictionary.
-			if book in book_list_dict:
-				# Exits out of RETRIEVE INFO MENU
-				retrieve_info = False
-
-				# Retrieves the rating
-				retrieve_rating(book)
-
-				# After the rating is retrieved, returns to RETRIEVE INFO MENU
-				retrieve_info = True
-
-			# Else block runs if title is not in the dictionary.
+			except AssertionError:
+				print("Sorry, I did not understand. Please enter the number 1, 2, 3, or 4.")
 			else:
-				# Prints out instructions on how to correctly type in a book title
-				# Also prints some instructions for troubleshooting
-				sleep(1)
-				print(book_does_not_exist)
-				sleep(1)
-				print(retrieve_troubleshoot)
-		# Option 2: Retrieves the AUTHOR of a book
-		elif user_wants_retrieve == "2":
-			print("You have chosen option 2, to retrieve the AUTHOR of a book.")
+				# Retrieve rating
+				if user_input == '1':
+					print("You have chosen option 1, to retrieve the RATING of a book.")
+					# Asks user to enter the title of the book
+					book = new_title("retrieve")
 
-			# Asks user to enter the title of the book
-			book = new_title("retrieve")
+					# Checks if the title requested is in the dictionary.
+					if book in book_list_dict:
+						# Retrieves the rating
+						retrieve_rating(book)
 
-			# Checks if the title requested is in the dictionary
-			if book in book_list_dict:
-				# Exits out of RETRIEVE INFO MENU
-				retrieve_info = False
+					# Else block runs if title is not in the dictionary.
+					else:
+						# Prints out instructions on how to correctly type in a book title
+						# Also prints some instructions for troubleshooting
+						sleep(1)
+						print(book_does_not_exist)
+						sleep(1)
+						print(retrieve_troubleshoot)
 
-				# Retrieves the author
-				retrieve_author(book)
+				# Retrieve author
+				elif user_input == '2':
+					print("You have chosen option 2, to retrieve the AUTHOR of a book.")
 
-				# Returns to RETRIEVE INFO MENU
-				retrieve_info = True
+					# Asks user to enter the title of the book
+					book = new_title("retrieve")
 
-			# Else block runs if title is not in the dictionary.
-			else:
-				# Prints out instructions on how to correctly type in a book title
-				# Also prints some instructions for troubleshooting
-				sleep(1)
-				print(book_does_not_exist)
-				sleep(1)
-				print(retrieve_troubleshoot)		
-		# Option 3: Retrieves ALL INFORMATION on the Book List
-		elif user_wants_retrieve == "3":
-			print("You have chosen option 3, to retrieve ALL INFORMATION on the Book List.")
+					# Checks if the title requested is in the dictionary.
+					if book in book_list_dict:
+						# Retrieves the rating
+						retrieve_author(book)
 
-			# Exits out of RETRIEVE INFO MENU
-			retrieve_info = False
+					# Else block runs if title is not in the dictionary.
+					else:
+						# Prints out instructions on how to correctly type in a book title
+						# Also prints some instructions for troubleshooting
+						sleep(1)
+						print(book_does_not_exist)
+						sleep(1)
+						print(retrieve_troubleshoot)
 
-			# Prints all information on the Book List
-			sleep(1)
-			print_all_books()
+				# Retrieve all information on booklist
+				elif user_input == '3':
+					print("You have chosen option 3, to retrieve ALL INFORMATION on the Book List.")
 
-			# Returns to RETRIEVE INFO MENU
-			retrieve_info = True
+					# Prints all information on the Book List
+					sleep(1)
+					print_all_books()
 
-		# Option 4: Returns to MAIN MENU
-		elif user_wants_retrieve == "4":
-			# Exits out of RETRIEVE INFO MENU
-			retrieve_info = False
+				# Return to Main Menu (also option 4)
+				# Exits out of retrieve_info input while loop
+				break 
 
-		# Else block runs if a string other than 1, 2, 3, or 4 is entered
-		else:
-			print("Sorry, I did not understand. Please enter the number 1, 2, 3, or 4.")
-
+### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def retrieve_rating(book):
 	# This function retrieves the rating of a book.
 	# Title is put in UPPERCASE for ease of reading.
 	sleep(1)
-	print("The rating of %s is: " % (book.upper()) + book_list_dict[book][1] + " stars.")
+	print("The rating of %s is: %d stars." % (book.upper(), book_list_dict[book][1]))
 
 def retrieve_author(book):
 	# This function retrieves the author of a book.
 	# Title and author are put in UPPERCASE for ease of reading.
 	sleep(1)
-	print("The author of %s is: " % (book.upper()) + book_list_dict[book][0].upper() + ".")
+	print("The author of %s is: %s." % (book.upper(), book_list_dict[book][0].upper()))
 
 def print_all_books():
 	# This function prints all of the books in the list book_list. 
