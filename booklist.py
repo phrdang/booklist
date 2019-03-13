@@ -41,6 +41,7 @@ NEW ADDITIONAL OBJECTIVES:
 
 UPDATE: March 13, 2019
 -Currently working on N.A.O. #1
+-Don't forget to merge try-except branch with master once finished!
 NEW ADDITIONAL OBJECTIVES:
 4. Update retrieve_rating and retrieve_author
 	-Combine helper functions into one retrieve function
