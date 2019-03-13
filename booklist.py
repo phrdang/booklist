@@ -56,6 +56,7 @@ NEW ADDITIONAL OBJECTIVES:
 		-Book
 			-Author?
 			-Genre?
+7. ADD DOCSTRINGS
 """
 from time import sleep
 
