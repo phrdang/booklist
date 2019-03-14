@@ -271,7 +271,6 @@ def retrieve_info():
 				# Exits out of retrieve_info input while loop
 				break 
 
-### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def retrieve_rating(book):
 	# This function retrieves the rating of a book.
 	# Title is put in UPPERCASE for ease of reading.
@@ -295,6 +294,7 @@ def print_all_books():
 		sleep(0.3)
 		print("%s by %s | Rating: %s out of 5 stars." % (book, book_list_dict[book][0], book_list_dict[book][1]))
 
+### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def update_title(book):
 	# This function updates the title of a book.
 
@@ -597,18 +597,26 @@ session will be PERMANENTLY erased. Continue?
 
 		# If user confirms exit, infinite loop breaks and program stops.
 		if continue_exit == "Y":
-			print("""
+			credits = """
                                   CREDITS
 Author: Rebecca Dang
-Project Started: September 27, 2018
-Project Completed: September 30, 2018 
+Project Started: 27 Sept 2018
+Project Completed: 
+	Version 1: 30 Sept 2018 
+	Version 2: [in progress]
 Programming Language: Python 
-Workspace: Sublime 
-Special Thanks to: Mom for the Mac, Dad for the support, and Codecademy for teaching 
+Workspace: Sublime, Visual Studio Code
+Special Thanks to: 
+	Mom for the Mac
+	Dad for the support
+	Codecademy & edX (MITx 6.00.1x) for teaching 
 If any errors occur, or if you have any inquiries, 
 please contact Rebecca Dang at ph.rdang@gmail.com
 
-""")
+"""
+			for line in credits.splitlines():
+				print(line)
+				sleep(0.3)
 			sleep(1)
 			print("Thank you for using Book List! You have successfully exited the program.")
 			break
