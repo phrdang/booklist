@@ -397,7 +397,6 @@ def update_author(book):
 
 	return new_author
 
-### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def update_rating(book):
 	'''
 	book: str, title of book that user wants to update the rating of
@@ -410,27 +409,25 @@ def update_rating(book):
 	# Variable saves original rating of selected book for confirmation message
 	original_rating = book_list_dict[book][1]
 
-	# Variable used for continuous check of data entered. 
-	enter_rating = True
-	while enter_rating == True:
-		# Asks user for updated rating
-		new_rating = input("What is the UPDATED RATING of the book (out of 5 stars)? ")
-		# Checks if user has inputted anything
-		if len(new_rating) == 0:
-			print("Sorry, you did not enter a rating of the book.")
-			# Checks if the user has inputted an integer.
-		if new_rating.isdigit() == False:
-			print("Please enter an integer between 0 and 5.")
-		# Checks if user has inputted a string that is completely digits.
-		# Thus, any negative values or floats will not be accepted.
-		if new_rating.isdigit() == True:
-			# Checks if user has inputted a rating that is greater than 5.
-			if int(new_rating) > 5:
-				print("Sorry, you entered a rating greater than 5. Please enter an integer between 0 and 5.")
-			# Checks if user has inputted an integer between 0 and 5. 
-			if int(new_rating) <= 5:
-				# Exits rating while loop
-				enter_rating = False
+	while True:
+		try:
+			# Asks user for updated rating
+			new_rating = int(input("What is the UPDATED RATING of the book (out of 5 stars)? "))
+			# User input must meet the following conditions:
+			# Isn't empty, and is an integer between 0 and 5
+			assert new_rating and new_rating <= 5 and new_rating >= 0
+		# Raises exception if user did not enter an integer
+		except ValueError:
+			print('Sorry, you did not enter an integer. Please try again.')
+		except AssertionError:
+			# If block runs if user did not input anything
+			if not new_rating:
+				print('Sorry, you did not enter a rating of the book. Please try again.')
+			# Elif block runs if rating is not from 0-5
+			elif new_rating > 5 or new_rating < 0:
+				print('Sorry, you did not enter a rating from 0-5. Please try again.')
+		else:
+			break
 
 	# Changes original rating to updated rating
 	book_list_dict[book][1] = new_rating
@@ -441,6 +438,7 @@ def update_rating(book):
 
 	return new_rating
 
+### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def edit_book(): 
 	'''
 	Allows user to edit information on the book_list_dict that previously inputted:
