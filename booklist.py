@@ -332,25 +332,25 @@ def update_title(book):
 	while True:
 		try:
 			# Asks user for title of the book
-			title_input = input('What is the UPDATED TITLE of the book? ')
+			new_title = input('What is the UPDATED TITLE of the book? ')
 
 			# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
 			# This is for alphabetizing purposes. 
-			if title_input[:3] == "The":
-				title_input = title_input[4:] + ", The"
+			if new_title[:3] == "The":
+				new_title = new_title[4:] + ", The"
 
 			# New title must be a string that is not empty 
 			# and not be a book that already exists (to prevent duplicates)
-			assert title_input and not title_input in book_list_dict
+			assert new_title and not new_title in book_list_dict
 		except AssertionError:
 			# If block runs if the title_input input was empty
-			if not title_input:
+			if not new_title:
 				print('Sorry, you did not enter a title of the book. Please try again.')
 			
 			# Elif block runs if the user entered a duplicate title
-			elif title_input in book_list_dict:
+			elif new_title in book_list_dict:
 				# Book titles capitalized for ease of reading
-				print("Sorry, you are trying to change the title of %s to %s, which already exists in the Book List. You can't have duplicate titles!" % (original_title.upper(), title_input.upper()))
+				print("Sorry, you are trying to change the title of %s to %s, which already exists in the Book List. You can't have duplicate titles!" % (original_title.upper(), new_title.upper()))
 		else:
 			break
 
@@ -358,13 +358,13 @@ def update_title(book):
 	del book_list_dict[original_title]
 
 	# Creates a new key/value pairing with the updated title, but keeps the original author and rating
-	book_list_dict[title_input] = [author, rating]
+	book_list_dict[new_title] = [author, rating]
 	
 	sleep(1)
 	# Confirmation message, titles uppercase for ease of reading
-	print("The original title, %s, has been changed to: %s." % (original_title.upper(), title_input.upper()))
+	print("The original title, %s, has been changed to: %s." % (original_title.upper(), new_title.upper()))
 
-	return title_input
+	return new_title
 
 def update_author(book):
 	'''
