@@ -366,7 +366,6 @@ def update_title(book):
 
 	return new_title
 
-### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def update_author(book):
 	'''
 	book: str, title of book that user wants to update the author of
@@ -379,26 +378,26 @@ def update_author(book):
 	# Variable saves original author of selected book for confirmation message
 	original_author = book_list_dict[book][0]
 
-	# Variable used for continuous check of data entered. 
-	enter_author = True
-	while enter_author == True:
-		# Asks user for updated author
-		new_author = input("What is the UPDATED AUTHOR of the book? ")
-		# Checks if user has inputted anything
-		if len(new_author) == 0:
-			print("Sorry, you did not enter an author of the book.")
+	while True:
+		try:
+			new_author = input('What is the UPDATED AUTHOR of the book? ')
+			# New author input must not be an empty string
+			assert new_author
+		except AssertionError:
+			print('Sorry, you did not enter an author of the book. Please try again.')
 		else:
-			enter_author = False
-			
+			break
+	
 	# Changes original author value to updated author value
 	book_list_dict[book][0] = new_author
 
-	# Confirmation message
 	sleep(1)
-	print("The original author, %s, has been changed to: %s." % (original_author, new_author))
+	# Confirmation message, titles uppercase for ease of reading
+	print("The original author, %s, has been changed to: %s." % (original_author.upper(), new_author.upper()))
 
 	return new_author
 
+### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def update_rating(book):
 	'''
 	book: str, title of book that user wants to update the rating of
