@@ -57,6 +57,10 @@ NEW ADDITIONAL OBJECTIVES:
 			-Author?
 			-Genre?
 7. ADD DOCSTRINGS
+
+UPDATE: March 14, 2019
+NEW ADDITIONAL OBJECTIVES:
+8. Make user input case insensitive
 """
 from time import sleep
 
@@ -77,75 +81,50 @@ book_does_not_exist = """Sorry, this book does not exist in the Book List. Pleas
 
 def new_title(purpose):
 	'''
-	Deals with the user inputting the title of a book
+	Asks user for title of a book
 
-	purpose: string, the purpose of the function ('retrieve', 'update', or 'new')
+	purpose: str, the purpose of the function ('retrieve', 'update', or 'new')
 
-	Returns title of book from user input, formatted in a way so that the program can use the information
+	Returns: str, title of book from user input, formatted in a way so that the program can use the information
 	''' 
 
-	# Variable used for continuous check of data entered. 
-	enter_title = True	
-	# Checks if the new_title function is being used for retrieval or update. If so, it doesn't need to check if the title already occurs.
-	if purpose == "retrieve" or purpose == "update":
-		while enter_title == True:
-			# Asks user for the title of the book
-			title = input("Title of Book: ")
-			# Checks if user has inputted anything
-			if len(title) == 0:
-				print("Sorry, you did not enter a title of the book.")
-			else:
-				# Exits enter title while loop
-				enter_title = False
-
-				# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
-				# This is for alphabetizing purposes. 
-				if title[:3] == "The":
-					title = title[4:] + ", The"
-
-				return title
-
-	# Checks if the new_title function is being used to add a new book. If so, it DOES need to check if the title already occurs. 
-	elif purpose == "new":
-		while enter_title == True:
-			# Asks user for the title of the book
-			title = input("Title of Book: ")
-			# Checks if user has inputted anything
-			if len(title) == 0:
-				print("Sorry, you did not enter a title of the book.")
-			# Checks if user is inputting a title that already exists
-			elif title in book_list_dict:
+	while True:
+		# Asks user for the title of the book
+		title = input("Title of Book: ")
+		# Checks if user has inputted anything
+		if len(title) == 0:
+			print("Sorry, you did not enter a title of the book.")
+		else:
+			if purpose == 'new' and title in book_list_dict:
 				print("Sorry, you are entering a new book that already exists in the Book List. Please type in the title of a NEW book.")
-			else:
-				# Exits enter title while loop
-				enter_title = False
+			# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
+			# This is for alphabetizing purposes. 
+			if title[:3] == "The":
+				title = title[4:] + ", The"
 
-				# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
-				# This is for alphabetizing purposes. 
-				if title[:3] == "The":
-					title = title[4:] + ", The"
-
-				return title
+			return title
 
 def new_author():
-	# This function allows for a new author to be added.
+	'''
+	Asks user for name of an author of a book
 
-	# Variable used for continuous check of data entered. 
-	enter_author = True
-	while enter_author == True:
+	Returns: str, name of author inputted
+	'''
+
+	while True:
 		# Asks user for the author of the book
 		author = input("Author: ")
 		# Checks if user has inputted anything
 		if len(author) == 0:
 			print("Sorry, you did not enter an author of the book.")
 		else:
-			enter_author = False
 			return author
  
 def new_rating():
 	'''
-	Lets new rating of book to be added
-	Returns rating, an int from 0-5
+	Asks user for rating of a book
+
+	Returns: rating, an int from 0-5
 	'''
 
 	while True:
@@ -160,7 +139,15 @@ def new_rating():
 			return rating
 
 def new_book():
-	# This function takes in user input and organizes it, as described in objectives 1 and 2.
+	'''
+	Takes in user input to create a new entry in the book_list_dict dictionary
+		-Title (str)
+		-Author (str)
+		-Rating (int, 0-5)
+	Then adds the information into book_list_dict
+
+	Returns: None
+	'''
 
 	print("You have chosen option 1, to add a new book.")
 
@@ -234,9 +221,13 @@ def retrieve_info():
 						# Prints out instructions on how to correctly type in a book title
 						# Also prints some instructions for troubleshooting
 						sleep(1)
-						print(book_does_not_exist)
+						for line in book_does_not_exist.splitlines():
+							print(line)
+							sleep(0.3)
 						sleep(1)
-						print(retrieve_troubleshoot)
+						for line in retrieve_troubleshoot.splitlines():
+							print(line)
+							sleep(0.3)
 
 				# Retrieve author
 				elif user_input == '2':
@@ -255,9 +246,13 @@ def retrieve_info():
 						# Prints out instructions on how to correctly type in a book title
 						# Also prints some instructions for troubleshooting
 						sleep(1)
-						print(book_does_not_exist)
+						for line in book_does_not_exist.splitlines():
+							print(line)
+							sleep(0.3)
 						sleep(1)
-						print(retrieve_troubleshoot)
+						for line in retrieve_troubleshoot.splitlines():
+							print(line)
+							sleep(0.3)
 
 				# Retrieve all information on booklist
 				elif user_input == '3':
@@ -267,24 +262,47 @@ def retrieve_info():
 					sleep(1)
 					print_all_books()
 
-				# Return to Main Menu (also option 4)
-				# Exits out of retrieve_info input while loop
-				break 
+				# Return to Main Menu 
+				elif user_input == '4':
+					break
 
 def retrieve_rating(book):
-	# This function retrieves the rating of a book.
+	'''
+	book: str, title of book
+
+	Retrieves the rating of a book
+
+	Returns: rating, int from 0-5
+	'''
+
 	# Title is put in UPPERCASE for ease of reading.
 	sleep(1)
 	print("The rating of %s is: %d stars." % (book.upper(), book_list_dict[book][1]))
+	return book_list_dict[book][1]
 
 def retrieve_author(book):
-	# This function retrieves the author of a book.
+	'''
+	book: str, title of book
+
+	Retrieves the author of a book
+
+	Returns: str, author of the book
+	'''
+
 	# Title and author are put in UPPERCASE for ease of reading.
 	sleep(1)
 	print("The author of %s is: %s." % (book.upper(), book_list_dict[book][0].upper()))
+	return book_list_dict[book][0]
 
 def print_all_books():
-	# This function prints all of the books in the list book_list. 
+	'''
+	Prints all of the books in the book_list_dict and their information in a readable way:
+		-Title
+		-Author
+		-Rating
+
+	Returns: None
+	'''
 
 	print ("The following are all of the books in alphabetical order by title:")
 	sleep(1)
@@ -296,7 +314,13 @@ def print_all_books():
 
 ### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def update_title(book):
-	# This function updates the title of a book.
+	'''
+	book: str, title of book that user wants to update the title of
+
+	Updates the title of a book
+
+	Returns: str, new title of book
+	'''
 
 	# Variable saves original title of selected book for 
 	# confirmation message and to distinguish between original and updated title
@@ -342,7 +366,13 @@ def update_title(book):
 	return new_title
 
 def update_author(book):
-	# This function updates the author of a book.
+	'''
+	book: str, title of book that user wants to update the author of
+
+	Updates the author of a book
+
+	Returns: str, new author of book
+	'''
 
 	# Variable saves original author of selected book for confirmation message
 	original_author = book_list_dict[book][0]
@@ -365,7 +395,17 @@ def update_author(book):
 	sleep(1)
 	print("The original author, %s, has been changed to: %s." % (original_author, new_author))
 
+	return new_author
+
 def update_rating(book):
+	'''
+	book: str, title of book that user wants to update the rating of
+
+	Updates the rating of a book
+
+	Returns: int from 0-5, new rating of book
+	'''
+
 	# Variable saves original rating of selected book for confirmation message
 	original_rating = book_list_dict[book][1]
 
@@ -398,7 +438,17 @@ def update_rating(book):
 	sleep(1)
 	print("The original rating, %s, has been changed to: %s." % (original_rating, new_rating))
 
+	return new_rating
+
 def edit_book(): 
+	'''
+	Allows user to edit information on the book_list_dict that previously inputted:
+		-Title
+		-Author
+		-Rating
+
+	Returns: None
+	'''
 	# This function allows the user to edit information that was previously inputted.
 
 	# Troubleshooting instructions; printed whenever necessary
@@ -460,7 +510,7 @@ def edit_book():
 				# While loop, condition checks if user should still be in the EDIT BOOK MENU 2. 
 				while edit_book_2 == True:
 					sleep(1)
-					print("""--- EDIT BOOK MENU 2 --- 
+					print("""		--- EDIT BOOK MENU 2 --- 
 			Would you like to:
 				(1) Edit the TITLE
 				(2) Edit the AUTHOR
@@ -538,9 +588,13 @@ def edit_book():
 				# Prints out instructions on how to correctly type in a book title
 				# Also prints some instructions for troubleshooting
 				sleep(1)
-				print(book_does_not_exist)
+				for line in book_does_not_exist.splitlines():
+					print(line)
+					sleep(0.3)
 				sleep(1)
-				print(edit_troubleshoot)
+				for line in edit_troubleshoot.splitlines():
+					print(line)
+					sleep(0.3)
 
 		# Option 2: Return to MAIN MENU
 		elif user_wants_edit_1 == "2":
