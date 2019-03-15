@@ -79,7 +79,7 @@ book_does_not_exist = """Sorry, this book does not exist in the Book List. Pleas
 	TYPE: Six of Crows
 """
 
-def new_title(purpose):
+def title_input(purpose):
 	'''
 	Asks user for title of a book
 
@@ -104,7 +104,7 @@ def new_title(purpose):
 
 			return title
 
-def new_author():
+def author_input():
 	'''
 	Asks user for name of an author of a book
 
@@ -120,7 +120,7 @@ def new_author():
 		else:
 			return author
  
-def new_rating():
+def rating_input():
 	'''
 	Asks user for rating of a book
 
@@ -130,7 +130,7 @@ def new_rating():
 	while True:
 		try:
 			rating = int(input("Rating (out of 5 stars): "))
-			assert type(rating) == int and rating <= 5 and rating >= 0
+			assert rating <= 5 and rating >= 0
 		except ValueError:
 			print("Error, please enter an integer.")
 		except AssertionError:
@@ -152,9 +152,9 @@ def new_book():
 	print("You have chosen option 1, to add a new book.")
 
 	# Asks the user for the title, author, and rating.
-	title = new_title("new")
-	author = new_author()
-	rating = new_rating()
+	title = title_input("new")
+	author = author_input()
+	rating = rating_input()
 
 	#Adds the title, author, and rating to the book_list_dict dictionary.
 	book_list_dict[title] = [author, rating]
@@ -209,7 +209,7 @@ def retrieve_info():
 				if user_input == '1':
 					print("You have chosen option 1, to retrieve the RATING of a book.")
 					# Asks user to enter the title of the book
-					book = new_title("retrieve")
+					book = title_input("retrieve")
 
 					# Checks if the title requested is in the dictionary.
 					if book in book_list_dict:
@@ -234,7 +234,7 @@ def retrieve_info():
 					print("You have chosen option 2, to retrieve the AUTHOR of a book.")
 
 					# Asks user to enter the title of the book
-					book = new_title("retrieve")
+					book = title_input("retrieve")
 
 					# Checks if the title requested is in the dictionary.
 					if book in book_list_dict:
@@ -332,25 +332,25 @@ def update_title(book):
 	while True:
 		try:
 			# Asks user for title of the book
-			new_title = input('What is the UPDATED TITLE of the book? ')
+			title_input = input('What is the UPDATED TITLE of the book? ')
 
 			# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
 			# This is for alphabetizing purposes. 
-			if new_title[:3] == "The":
-				new_title = new_title[4:] + ", The"
+			if title_input[:3] == "The":
+				title_input = title_input[4:] + ", The"
 
 			# New title must be a string that is not empty 
 			# and not be a book that already exists (to prevent duplicates)
-			assert new_title and not new_title in book_list_dict
+			assert title_input and not title_input in book_list_dict
 		except AssertionError:
-			# If block runs if the new_title input was empty
-			if not new_title:
+			# If block runs if the title_input input was empty
+			if not title_input:
 				print('Sorry, you did not enter a title of the book. Please try again.')
 			
 			# Elif block runs if the user entered a duplicate title
-			elif new_title in book_list_dict:
+			elif title_input in book_list_dict:
 				# Book titles capitalized for ease of reading
-				print("Sorry, you are trying to change the title of %s to %s, which already exists in the Book List. You can't have duplicate titles!" % (original_title.upper(), new_title.upper()))
+				print("Sorry, you are trying to change the title of %s to %s, which already exists in the Book List. You can't have duplicate titles!" % (original_title.upper(), title_input.upper()))
 		else:
 			break
 
@@ -358,13 +358,13 @@ def update_title(book):
 	del book_list_dict[original_title]
 
 	# Creates a new key/value pairing with the updated title, but keeps the original author and rating
-	book_list_dict[new_title] = [author, rating]
+	book_list_dict[title_input] = [author, rating]
 	
 	sleep(1)
 	# Confirmation message, titles uppercase for ease of reading
-	print("The original title, %s, has been changed to: %s." % (original_title.upper(), new_title.upper()))
+	print("The original title, %s, has been changed to: %s." % (original_title.upper(), title_input.upper()))
 
-	return new_title
+	return title_input
 
 def update_author(book):
 	'''
@@ -492,7 +492,7 @@ def edit_book():
 			print("You have chosen option 1. What book would you like to edit?")
 
 			# Asks user to enter the title of the book
-			book = new_title("update")
+			book = title_input("update")
 
 			# Checks if the title requested is in the dictionary
 			if book in book_list_dict:
