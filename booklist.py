@@ -312,7 +312,6 @@ def print_all_books():
 		sleep(0.3)
 		print("%s by %s | Rating: %s out of 5 stars." % (book, book_list_dict[book][0], book_list_dict[book][1]))
 
-### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def update_title(book):
 	'''
 	book: str, title of book that user wants to update the title of
@@ -330,28 +329,30 @@ def update_title(book):
 	author = book_list_dict[original_title][0]
 	rating = book_list_dict[original_title][1]
 
-	# Variable used for continuous check of data entered. 
-	enter_title = True	
-	while enter_title == True:
-		# Asks user for the title of the book
-		new_title = input("What is the UPDATED TITLE of the book? ")
-		# Checks if user has inputted anything
-		if len(new_title) == 0:
-			print("Sorry, you did not enter a title of the book.")
-		# Checks if user has inputted a title that already exists 
-		elif new_title in book_list_dict:
-			print("Sorry, you are trying to change the title of %s to %s, which already exists in the Book List. You can't have duplicate titles!" % (original_title, new_title))
-			# Returns to EDIT BOOK MENU 2
-			enter_title = False
-			return None 
-		else:
-			# Exits enter title while loop
-			enter_title = False
+	while True:
+		try:
+			# Asks user for title of the book
+			new_title = input('What is the UPDATED TITLE of the book? ')
 
 			# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
 			# This is for alphabetizing purposes. 
 			if new_title[:3] == "The":
 				new_title = new_title[4:] + ", The"
+
+			# New title must be a string that is not empty 
+			# and not be a book that already exists (to prevent duplicates)
+			assert new_title and not new_title in book_list_dict
+		except AssertionError:
+			# If block runs if the new_title input was empty
+			if not new_title:
+				print('Sorry, you did not enter a title of the book. Please try again.')
+			
+			# Elif block runs if the user entered a duplicate title
+			elif new_title in book_list_dict:
+				# Book titles capitalized for ease of reading
+				print("Sorry, you are trying to change the title of %s to %s, which already exists in the Book List. You can't have duplicate titles!" % (original_title.upper(), new_title.upper()))
+		else:
+			break
 
 	# Deletes key/value pairing of selected book
 	del book_list_dict[original_title]
@@ -359,12 +360,13 @@ def update_title(book):
 	# Creates a new key/value pairing with the updated title, but keeps the original author and rating
 	book_list_dict[new_title] = [author, rating]
 	
-	# Confirmation message
 	sleep(1)
-	print("The original title, %s, has been changed to: %s." % (original_title, new_title))
+	# Confirmation message, titles uppercase for ease of reading
+	print("The original title, %s, has been changed to: %s." % (original_title.upper(), new_title.upper()))
 
 	return new_title
 
+### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def update_author(book):
 	'''
 	book: str, title of book that user wants to update the author of
