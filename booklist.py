@@ -641,7 +641,24 @@ def edit_book():
 					# Exits EDIT BOOK MENU 1 while loop
 					edit_book_1 = False
 
-### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
+
+credits = """
+			CREDITS
+Author: Rebecca Dang
+Project Started: 27 Sept 2018
+Project Completed: 
+	Version 1: 30 Sept 2018 
+	Version 2: [in progress]
+Programming Language: Python 
+Workspace: Sublime, Visual Studio Code
+Special Thanks to: 
+	Mom for the Mac
+	Dad for the support
+	Codecademy & edX (MITx 6.00.1x) for teaching 
+If any errors occur, or if you have any inquiries, 
+please contact Rebecca Dang at ph.rdang@gmail.com
+
+"""
 
 # Initial message when the program starts up
 print("Welcome to the Book List!")
@@ -660,24 +677,30 @@ Would you like to:
 	(3) EDIT information about an existing book
 	(4) EXIT the program
 """)
-	user_wants = input("Enter 1, 2, 3, or 4: ")
+	acceptable_input = ['1', '2', '3', '4']
+	try:
+		user_input = input("Enter 1, 2, 3, or 4: ")
+		assert user_input in acceptable_input
+	except AssertionError:
+		print("Sorry, I did not understand. Please enter the number 1, 2, 3, or 4.")
+	else:
+		# Option 1: Adds a new book to the dictionary
+		if user_input == "1":
+			new_book()
 
-	# Option 1: Adds a new book to the dictionary
-	if user_wants == "1":
-		new_book()
+		# Option 2: Retrieves information about a book. Goes to RETRIEVE INFO MENU.
+		elif user_input == "2":
+			retrieve_info()
 
-	# Option 2: Retrieves information about a book. Goes to RETRIEVE INFO MENU.
-	elif user_wants == "2":
-		retrieve_info()
+		# Option 3: Edits information about a book. Goes to EDIT BOOK MENU 1.
+		elif user_input == "3":
+			edit_book()
 
-	# Option 3: Edits information about a book. Goes to EDIT BOOK MENU 1.
-	elif user_wants == "3":
-		edit_book()
+		# Option 4: Exits the program.
+		elif user_input == "4":
+			# Asks user for confirmation about exiting the program. 
+			print("""You have chosen option 4, to exit the program.
 
-	# Option 4: Exits the program.
-	elif user_wants == "4":
-		# Asks user for confirmation about exiting the program. 
-		print("""You have chosen option 4, to exit the program.
 Are you sure you want to exit? All information you have inputted during this 
 session will be PERMANENTLY erased. Continue?
 	(Y) Yes
@@ -685,34 +708,13 @@ session will be PERMANENTLY erased. Continue?
 		
 	Any other character besides 'Y' will be considered 'No.'
 """)
-		continue_exit = input("Enter Y or N: ")
+			user_input = input("Enter Y or N: ")
 
-		# If user confirms exit, infinite loop breaks and program stops.
-		if continue_exit == "Y":
-			credits = """
-                                  CREDITS
-Author: Rebecca Dang
-Project Started: 27 Sept 2018
-Project Completed: 
-	Version 1: 30 Sept 2018 
-	Version 2: [in progress]
-Programming Language: Python 
-Workspace: Sublime, Visual Studio Code
-Special Thanks to: 
-	Mom for the Mac
-	Dad for the support
-	Codecademy & edX (MITx 6.00.1x) for teaching 
-If any errors occur, or if you have any inquiries, 
-please contact Rebecca Dang at ph.rdang@gmail.com
-
-"""
-			for line in credits.splitlines():
-				print(line)
-				sleep(0.3)
-			sleep(1)
-			print("Thank you for using Book List! You have successfully exited the program.")
-			break
-
-	# Else block runs if user enters a string that is not 1, 2, 3, or 4.
-	else:
-		print("Sorry, I did not understand. Please enter the number 1, 2, 3, or 4.")
+			# If user confirms exit, infinite loop breaks and program stops.
+			if user_input == "Y":
+				for line in credits.splitlines():
+					print(line)
+					sleep(0.3)
+				sleep(1)
+				print("Thank you for using Book List! You have successfully exited the program.")
+				break
