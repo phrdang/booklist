@@ -61,11 +61,28 @@ NEW ADDITIONAL OBJECTIVES:
 UPDATE: March 14, 2019
 NEW ADDITIONAL OBJECTIVES:
 8. Make user input case insensitive
+
+UPDATE: March 15, 2019
+NAO added:
+9. Edit use of troubleshoot multiline strings in retrieve_info and edit_book
+
+NAO scrapped:
+#4
+
+NAO completed:
+#1, 7, 9
+
+NAO incomplete:
+#2, 3, 5, 6, 8
 """
 from time import sleep
 
-# Troubleshooting instructions for user if book query doesn't exist
-book_does_not_exist = """Sorry, this book does not exist in the Book List. Please check the following:
+# Troubleshooting instructions for user for inputting book titles
+book_title_troubleshoot = """
+--- BOOK TITLE INPUT TROUBLESHOOTING --
+
+If you're having trouble entering a valid book title, please check the following:
+
 >>> Spelling, capitalization, and spacing 
 	DO NOT type: the h8 Ugive
 	TYPE: The Hate U Give
@@ -77,32 +94,117 @@ book_does_not_exist = """Sorry, this book does not exist in the Book List. Pleas
 >>> Do not include anything besides the title of the book
 	DO NOT type: Six of Crows by Leigh Bardugo
 	TYPE: Six of Crows
+
+"""
+
+# Troubleshooting instructions for editing a book
+edit_troubleshoot = """
+--- BOOK EDITING TROUBLESHOOTING ---
+
+>>> If you're having trouble editing a book, it is possible you made a typo while inputting the title of the book.
+
+>>> Follow these instructions:
+	1. Choose option 2 of the EDIT BOOK MENU 1.
+	2. Choose option 2 of the MAIN MENU.
+	3. Choose option 3 of the RETRIEVE INFO menu.
+	4. Note down the title of the book you were trying to find.
+	5. Choose option 3 of the MAIN MENU. 
+	6. Type in the incorrect title that you noted down in Step 3.
+	7. Update any incorrect information. 
+
+"""	
+
+# Troubleshooting instructions for retrieving info about a book
+retrieve_troubleshoot = """
+--- INFORMATION RETRIEVAL TROUBLESHOOTING ---
+
+>>> If you're having trouble retrieving information about a book, it is possible you made a typo while inputting the title of the book.
+
+>>> Follow these instructions:
+	1. Choose option 3 of the RETRIEVE INFO menu.
+	2. Note down the title of the book you were trying to find. 
+	3. Choose option 3 of the MAIN MENU. 
+	4. Type in the incorrect title that you noted down in Step 2.
+	5. Update any incorrect information. 
+
 """
 
 def title_input(purpose):
 	'''
 	Asks user for title of a book
 
-	purpose: str, the purpose of the function ('retrieve', 'update', or 'new')
+	purpose: str, the purpose of the function ('retrieve', 'edit', or 'new')
 
 	Returns: str, title of book from user input, formatted in a way so that the program can use the information
 	''' 
 
+	issue_counter = 0
+
 	while True:
 		# Asks user for the title of the book
 		title = input("Title of Book: ")
-		# Checks if user has inputted anything
-		if len(title) == 0:
-			print("Sorry, you did not enter a title of the book.")
-		else:
-			if purpose == 'new' and title in book_list_dict:
-				print("Sorry, you are entering a new book that already exists in the Book List. Please type in the title of a NEW book.")
-			# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
-			# This is for alphabetizing purposes. 
-			if title[:3] == "The":
-				title = title[4:] + ", The"
 
-			return title
+		# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
+		# This is for alphabetizing purposes. 
+		if title[:3] == "The":
+			title = title[4:] + ", The"
+
+		# Checks if user has inputted anything
+		if not title:
+			print("Sorry, you did not enter a title of the book.")
+			print()
+		# Else block runs if user has inputted something
+		else:
+			if purpose == 'retrieve' or purpose == 'edit':
+				# Error message if book the user wants to retrieve info about or edit does not exist
+				if title not in book_list_dict:
+					print('Sorry, book not found in the Book List. Please type in the title of an EXISTING book.')
+					sleep(1)
+					print()
+					issue_counter += 1
+					# Only prints the long troubleshooting instructions if this is the 3rd time
+					# the user is having trouble (otherwise it gets annoying)
+					if issue_counter == 3:
+						# Prints out instructions on how to correctly type in a book title 
+						# if book doesn't exist in book_list_dict
+						for line in book_title_troubleshoot.splitlines():
+							print(line)
+							sleep(0.3)
+						if purpose == 'retrieve':
+							# Prints out retrieve troubleshoot instructions
+							for line in retrieve_troubleshoot.splitlines():
+								print(line)
+								sleep(0.3)
+						elif purpose == 'edit':
+							# Prints out edit troubleshoot instructions
+							for line in edit_troubleshoot.splitlines():
+								print(line)
+								sleep(0.3)
+						first_issue = False
+				# If the book does exist, exit while loop
+				else:
+					break
+
+			# If block runs if user tries to create a new book that already exists in the Book List
+			if purpose == 'new' and title in book_list_dict:
+				print("Sorry, this book already exists in the Book List. Please type in the title of a NEW book.")
+				sleep(1)
+				print()
+				issue_counter += 1
+				# Only prints the long troubleshooting instructions if this is the first time
+				# the user is having trouble (otherwise it gets annoying)
+				if issue_counter == 3:
+					# Prints out instructions on how to correctly type in a book title 
+					# if book already exists in book_list_dict
+					for line in book_title_troubleshoot.splitlines():
+						print(line)
+						sleep(0.3)
+					first_issue = False
+			# If book is a new book, exit while loop
+			elif purpose == 'new' and title not in book_list_dict:
+				break
+
+	return title
 
 def author_input():
 	'''
@@ -115,7 +217,7 @@ def author_input():
 		# Asks user for the author of the book
 		author = input("Author: ")
 		# Checks if user has inputted anything
-		if len(author) == 0:
+		if not author:
 			print("Sorry, you did not enter an author of the book.")
 		else:
 			return author
@@ -130,7 +232,8 @@ def rating_input():
 	while True:
 		try:
 			rating = int(input("Rating (out of 5 stars): "))
-			assert rating <= 5 and rating >= 0
+			# User input cannot be empty and rating must be an integer from 0-5 
+			assert rating and rating <= 5 and rating >= 0
 		except ValueError:
 			print("Error, please enter an integer.")
 		except AssertionError:
@@ -164,17 +267,14 @@ def new_book():
 	print("The book %s by %s has been added. The rating is %s out of 5 stars." % (title.upper(), author.upper(), rating))
 
 def retrieve_info():
-	# This function retrieves values as described in objective 3, and prints it as described in objective 4.
-	
-	# Troubleshooting instructions; printed whenever necessary
-	retrieve_troubleshoot = """
->>> If the issue continues, follow these instructions:
-	1. Choose option 3 of the RETRIEVE INFO menu.
-	2. Note down the title of the book you were trying to find. It is possible you made a typo while inputting the title of the book.
-	3. Choose option 3 of the MAIN MENU. 
-	4. Type in the incorrect title that you noted down in Step 2.
-	5. Update any incorrect information. 
-"""
+	'''
+	Retrieves information about books in book_list_dict:
+		-Rating
+		-Author
+		-Prints all information currently on the Book List
+
+	Returns: None
+	'''
 
 	print("You have chosen option 2, to retrieve information about an existing book.")
 
@@ -211,23 +311,8 @@ def retrieve_info():
 					# Asks user to enter the title of the book
 					book = title_input("retrieve")
 
-					# Checks if the title requested is in the dictionary.
-					if book in book_list_dict:
-						# Retrieves the rating
-						retrieve_rating(book)
-
-					# Else block runs if title is not in the dictionary.
-					else:
-						# Prints out instructions on how to correctly type in a book title
-						# Also prints some instructions for troubleshooting
-						sleep(1)
-						for line in book_does_not_exist.splitlines():
-							print(line)
-							sleep(0.3)
-						sleep(1)
-						for line in retrieve_troubleshoot.splitlines():
-							print(line)
-							sleep(0.3)
+					# Retrieves the rating
+					retrieve_rating(book)
 
 				# Retrieve author
 				elif user_input == '2':
@@ -236,23 +321,8 @@ def retrieve_info():
 					# Asks user to enter the title of the book
 					book = title_input("retrieve")
 
-					# Checks if the title requested is in the dictionary.
-					if book in book_list_dict:
-						# Retrieves the rating
-						retrieve_author(book)
-
-					# Else block runs if title is not in the dictionary.
-					else:
-						# Prints out instructions on how to correctly type in a book title
-						# Also prints some instructions for troubleshooting
-						sleep(1)
-						for line in book_does_not_exist.splitlines():
-							print(line)
-							sleep(0.3)
-						sleep(1)
-						for line in retrieve_troubleshoot.splitlines():
-							print(line)
-							sleep(0.3)
+					# Retrieves the author
+					retrieve_author(book)
 
 				# Retrieve all information on booklist
 				elif user_input == '3':
@@ -305,6 +375,7 @@ def print_all_books():
 	'''
 
 	print ("The following are all of the books in alphabetical order by title:")
+	print()
 	sleep(1)
 
 	# key = str.lower to be case insenitive sorting 
@@ -312,7 +383,7 @@ def print_all_books():
 		sleep(0.3)
 		print("%s by %s | Rating: %s out of 5 stars." % (book, book_list_dict[book][0], book_list_dict[book][1]))
 
-def update_title(book):
+def edit_title(book):
 	'''
 	book: str, title of book that user wants to update the title of
 
@@ -366,7 +437,7 @@ def update_title(book):
 
 	return new_title
 
-def update_author(book):
+def edit_author(book):
 	'''
 	book: str, title of book that user wants to update the author of
 
@@ -397,7 +468,7 @@ def update_author(book):
 
 	return new_author
 
-def update_rating(book):
+def edit_rating(book):
 	'''
 	book: str, title of book that user wants to update the rating of
 
@@ -438,7 +509,6 @@ def update_rating(book):
 
 	return new_rating
 
-### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 def edit_book(): 
 	'''
 	Allows user to edit information on the book_list_dict that previously inputted:
@@ -448,161 +518,130 @@ def edit_book():
 
 	Returns: None
 	'''
-	# This function allows the user to edit information that was previously inputted.
-
-	# Troubleshooting instructions; printed whenever necessary
-	edit_troubleshoot = """
->>> If the issue continues, follow these instructions:
-	1. Choose option 2 of the EDIT BOOK MENU 1.
-	2. Choose option 2 of the MAIN MENU.
-	3. Choose option 3 of the RETRIEVE INFO menu.
-	4. Note down the title of the book you were trying to find. It is possible you made a typo while inputting the title of the book.
-	5. Choose option 3 of the MAIN MENU. 
-	6. Type in the incorrect title that you noted down in Step 3.
-	7. Update any incorrect information. 
-"""	
-
-	# Variable used to stay/switch between menus.
-	edit_book = True 
 
 	print("You have chosen option 3, to edit information about an existing book.")
 
-	# Checks if the book_list_dict is empty; if it is, it prompts the user to add a book before proceeding.	
-	if len(book_list_dict) == 0:
-		# Prevents going into EDIT BOOK MENU 1
-		edit_book = False
+	edit_book_1 = True
+
+	try:
+		assert book_list_dict
+	except AssertionError:
 		print("Sorry, there are currently no books in the list. Please add at least 1 book before editing information.")
+	else:
+		# While loop for EDIT BOOK MENU 1. 
+		while edit_book_1:
+			print("""	--- EDIT BOOK MENU 1 --- 
+		Would you like to:
+		(1) CHOOSE A BOOK to edit
 
-	# While loop, condition checks if user should still be in the EDIT BOOK MENU 1. 
-	while edit_book == True:
-		print("""--- EDIT BOOK MENU 1 --- 
-	Would you like to:
-	(1) CHOOSE A BOOK to edit
+		(2) Return to MAIN MENU
+			""")
 
-	(2) Return to MAIN MENU
-		""")
+			acceptable_input = ['1', '2']
+			try:
+				user_input = input("Enter 1 or 2: ")
+				assert user_input in acceptable_input
+			except AssertionError:
+				print("Sorry, I did not understand. Please enter 1 or 2.")
+			else:
+				# Option 1 of EDIT BOOK MENU 1: Asks user to choose a book to edit
+				if user_input == "1":
+					print("You have chosen option 1. What book would you like to edit?")
 
-		user_wants_edit_1 = input("Enter 1 or 2: ")
+					# Asks user to enter the title of the book
+					book = title_input("edit")
 
-		# Option 1: Asks user to choose a book to edit
-		if user_wants_edit_1 == "1":
-
-			print("You have chosen option 1. What book would you like to edit?")
-
-			# Asks user to enter the title of the book
-			book = title_input("update")
-
-			# Checks if the title requested is in the dictionary
-			if book in book_list_dict:
-				# Exits out of EDIT BOOK MENU 1 
-				edit_book = False
-
-				# Enters EDIT BOOK MENU 2
-				edit_book_2 = True
-
-				# Prints all information about requested book.
-				sleep(1)
-				print("The following is the EXISTING information in the Book List:")
-				sleep(0.3)
-				print("Title: %s | Author: %s | Rating (out of 5 stars): %s" % (book, book_list_dict[book][0], book_list_dict[book][1]))
-
-				# While loop, condition checks if user should still be in the EDIT BOOK MENU 2. 
-				while edit_book_2 == True:
+					# Prints all information about requested book.
 					sleep(1)
-					print("""		--- EDIT BOOK MENU 2 --- 
+					print("The following is the EXISTING information in the Book List:")
+					sleep(0.3)
+					print("Title: %s | Author: %s | Rating (out of 5 stars): %s" % (book, book_list_dict[book][0], book_list_dict[book][1]))
+
+					edit_book_2 = True
+
+					# While loop for EDIT BOOK MENU 2. 
+					while edit_book_2:
+						sleep(1)
+						print("""		--- EDIT BOOK MENU 2 --- 
 			Would you like to:
 				(1) Edit the TITLE
 				(2) Edit the AUTHOR
 				(3) Edit the RATING
 
-				(4) DELETE an entire BOOK
+				(4) DELETE the entire BOOK
 
 				(5) Change the information about ANOTHER BOOK
 
 				(6) Return to MAIN MENU
 					""")
 
-					user_wants_edit_2 = input("Enter 1, 2, 3, 4, 5, or 6: ")
+						acceptable_input = ['1', '2', '3', '4', '5', '6']
 
-					# Option 1: Edits the title of the selected book
-					if user_wants_edit_2 == "1":
-						# Book variable is changed to updated title, because old title no longer exists once it is changed.
-						book = update_title(book)
+						try:
+							user_input = input("Enter 1, 2, 3, 4, 5, or 6: ")
+							assert user_input in acceptable_input
+						except AssertionError:
+							print("Sorry, I did not understand. Please enter 1, 2, 3, 4, 5, or 6.")
+						else:
+							# Option 1 of EDIT BOOK MENU 2: Edits the title of the selected book
+							if user_input == "1":
+								# Book variable is changed to updated title, because old title no longer exists once it is changed.
+								book = edit_title(book)
 
-					# Option 2: Edits the author of the selected book
-					elif user_wants_edit_2 == "2":
-						update_author(book)
-					
-					# Option 3: Edits the rating of the selected book
-					elif user_wants_edit_2 == "3":
-						update_rating(book)
-					
-					# Option 4: Deletes the selected book
-					elif user_wants_edit_2 == "4":
-						# Asks user for confirmation to delete
-						print("""Deleting a book is PERMANENT. Continue? 
+							# Option 2 of EDIT BOOK MENU 2: Edits the author of the selected book
+							elif user_input == "2":
+								edit_author(book)
+							
+							# Option 3 of EDIT BOOK MENU 2: Edits the rating of the selected book
+							elif user_input == "3":
+								edit_rating(book)
+							
+							# Option 4 of EDIT BOOK MENU 2: Deletes the selected book
+							elif user_input == "4":
+								# Asks user for confirmation to delete
+								print("""Deleting a book is PERMANENT. Continue? 
 	(Y) Yes
 	(N) No
 
 	Any other character besides 'Y' will be considered 'No.'
 	""")
-						continue_delete_book = input("Enter Y or N: ")
+								user_input = input("Enter Y or N: ")
 
-						# If confirmed, deletes the book
-						if continue_delete_book == "Y":
-							original_title = book 
-							del book_list_dict[book]
-							# Confirmation message. Original title is in UPPERCASE for ease of reading
-							sleep(1)
-							print("The book, " + original_title.upper() + ", has been deleted.")
-							# Exits out of EDIT BOOK MENU 2 
-							# This is because if the user stays in EBM2, the old book (that no longer exists) is still selected
-							# If user attempts to edit a book that does not exist, program will crash. 
-							edit_book_2 = False
+								# If confirmed, deletes the book
+								if user_input == "Y":
+									original_title = book 
+									del book_list_dict[book]
+									# Confirmation message. Original title is in UPPERCASE for ease of reading
+									sleep(1)
+									print("The book, %s, has been deleted." % (original_title.upper()))
+									# Exits out of EDIT BOOK MENU 2 
+									# This is because if the user stays in EBM2, the old book (that no longer exists) is still selected
+									# If user attempts to edit a book that does not exist, program will crash. 
+									edit_book_2 = False
+								else:
+									# Confirmation message. Original title is in UPPERCASE for ease of reading
+									print("Deletion of the book, %s, has been cancelled." % (original_title.upper()))
 
-							# Returns to EDIT BOOK MENU 1
-							edit_book = True 
+							# Option 5 of EDIT BOOK MENU 2: Change information about another book
+							elif user_input == "5":
+								# Exits EDIT BOOK MENU 2
+								edit_book_2 = False
 
-					# Option 5: Return to EDIT BOOK MENU 1 to choose another book to edit
-					elif user_wants_edit_2 == "5":
-						# Exits EDIT BOOK MENU 2
-						edit_book_2 = False
+							# Option 6 of EDIT BOOK MENU 2: Return to MAIN MENU
+							elif user_input == "6":
+								# Exits EDIT BOOK MENU 2
+								edit_book_2 = False
 
-						# Returns to EDIT BOOK MENU 1
-						edit_book = True 
+								# Exits EDIT BOOK MENU 1
+								edit_book_1 = False
 
-					# Option 6: Return to MAIN MENU
-					elif user_wants_edit_2 == "6":
-						# Exits EDIT BOOK MENU 2
-						edit_book_2 = False
 
-						# Exits EDIT BOOK MENU 1
-						edit_book = False
+				# Option 2 of EDIT BOOK MENU 1: Return to MAIN MENU
+				elif user_input == "2":
+					# Exits EDIT BOOK MENU 1 while loop
+					edit_book_1 = False
 
-					# Else block runs if user entered in a string that is not 1, 2, 3, 4, 5, or 6.
-					else:
-						print("Sorry, I did not understand. Please enter 1, 2, 3, 4, 5, or 6.")
-			# Else block runs if title is not in the dictionary
-			else:
-				# Prints out instructions on how to correctly type in a book title
-				# Also prints some instructions for troubleshooting
-				sleep(1)
-				for line in book_does_not_exist.splitlines():
-					print(line)
-					sleep(0.3)
-				sleep(1)
-				for line in edit_troubleshoot.splitlines():
-					print(line)
-					sleep(0.3)
-
-		# Option 2: Return to MAIN MENU
-		elif user_wants_edit_1 == "2":
-			# Exits EDIT BOOK MENU 1
-			edit_book = False
-
-		# Else block runs if user entered in a string that is not 1 or 2.
-		else:
-			print("Sorry, I did not understand. Please enter 1 or 2.")
+### EVERYTHING BELOW HAS NOT BEEN TRY-EXCEPT CHECKED ###
 
 # Initial message when the program starts up
 print("Welcome to the Book List!")
