@@ -63,17 +63,19 @@ NEW ADDITIONAL OBJECTIVES:
 8. Make user input case insensitive
 
 UPDATE: March 15, 2019
+VERSION 2 IS NOW COMPLETE!
+
+NAO completed:
+#1, 7, 9, 5
+
+NAO incomplete:
+#2, 3, 6, 8
+
 NAO added:
 9. Edit use of troubleshoot multiline strings in retrieve_info and edit_book
 
 NAO scrapped:
 #4
-
-NAO completed:
-#1, 7, 9
-
-NAO incomplete:
-#2, 3, 5, 6, 8
 """
 from time import sleep
 
@@ -180,7 +182,6 @@ def title_input(purpose):
 							for line in edit_troubleshoot.splitlines():
 								print(line)
 								sleep(0.3)
-						first_issue = False
 				# If the book does exist, exit while loop
 				else:
 					break
@@ -199,7 +200,6 @@ def title_input(purpose):
 					for line in book_title_troubleshoot.splitlines():
 						print(line)
 						sleep(0.3)
-					first_issue = False
 			# If book is a new book, exit while loop
 			elif purpose == 'new' and title not in book_list_dict:
 				break
@@ -374,14 +374,58 @@ def print_all_books():
 	Returns: None
 	'''
 
+	def get_longest_title():
+		'''
+		Gets the (first) longest title in the Book List
+
+		Returns: str, longest title in book_list_dict
+		'''
+
+		longest_title = ''
+		
+		for title in book_list_dict.keys():
+			temp_longest_title = title
+			if len(temp_longest_title) > len(longest_title):
+				longest_title = temp_longest_title
+
+		return longest_title
+	
+	def get_longest_author():
+		'''
+		Gets the (first) longest author in the Book List
+
+		Returns: str, longest author in book_list_dict
+		'''
+
+		longest_author = ''
+
+		for author_and_rating in book_list_dict.values():
+			temp_longest_author = author_and_rating[0]
+			if len(temp_longest_author) > len(longest_author):
+				longest_author = temp_longest_author
+
+		return longest_author
+
+	longest_title = get_longest_title()
+	longest_author = get_longest_author()
+
+	title_ljust = len(longest_title) + 10
+	author_ljust = len(longest_author) + 10
+
 	print ("The following are all of the books in alphabetical order by title:")
 	print()
 	sleep(1)
 
+	header = "TITLE".ljust(title_ljust) + "AUTHOR".ljust(author_ljust) + "RATING"
+
+	print(header)
+	print("-"*len(header))
+	print()
+
 	# key = str.lower to be case insenitive sorting 
 	for book in sorted(book_list_dict, key = str.lower):
 		sleep(0.3)
-		print("%s by %s | Rating: %s out of 5 stars." % (book, book_list_dict[book][0], book_list_dict[book][1]))
+		print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
 
 def edit_title(book):
 	'''
@@ -648,7 +692,8 @@ Author: Rebecca Dang
 Project Started: 27 Sept 2018
 Project Completed: 
 	Version 1: 30 Sept 2018 
-	Version 2: [in progress]
+	Version 2: 15 March 2019
+	Version 3: [in progress]
 Programming Language: Python 
 Workspace: Sublime, Visual Studio Code
 Special Thanks to: 
