@@ -685,6 +685,27 @@ def edit_book():
 					# Exits EDIT BOOK MENU 1 while loop
 					edit_book_1 = False
 
+def save_booklist(book_list):
+	'''
+	book_list: dict, current book_list_dict
+
+	Saves all information currently on the booklist on a .txt file
+	in a way such that users can retrieve past sessions.
+
+	Returns: None
+	'''
+	#code
+
+def load_booklist():
+	'''
+	Asks user which booklist file they want to load,
+	then loads all of that information onto the current
+	book_list_dict dictionary for updating in the 
+	current session.
+
+	Returns: dict, a prior book_list_dict
+	'''
+	#code
 
 credits = """
 			CREDITS
