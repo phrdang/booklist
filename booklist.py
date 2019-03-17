@@ -839,6 +839,7 @@ please contact Rebecca Dang at ph.rdang@gmail.com
 
 # Initial message when the program starts up
 print("Welcome to the Book List!")
+sleep(1)
 
 # Asks user if they want to load previous session data
 user_input = input('''Would you like to load a information from a previous Book List session? 
