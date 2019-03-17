@@ -708,7 +708,7 @@ def save_booklist(book_list):
 
 		Returns: None
 		'''
-		regex = '[a-zA-Z0-9\s]'
+		regex = '[^a-zA-Z0-9\s]'
 
 		while True:
 			try:
@@ -720,27 +720,27 @@ def save_booklist(book_list):
 			except AssertionError:
 				print('Error, please enter a file name that contains ONLY letters, numbers, and/or spaces. (No symbols!)')
 			else:
+				# Adds .txt file extension
 				file_name = file_name + '.txt'
-				while True:
-					try:
-						if purpose == 'new':
-							# Creates new file with designated file name
-							file = open(file_name, 'x')
-						elif purpose == 'existing':
-							# Opens file in append mode
-							file = open(file_name, 'a')
-					except FileExistsError:
-						print('Error, file already exists. Please enter a NEW file name.')
-					except FileNotFoundError:
-						print('Error, file not found. Please enter the name of an EXISTING file (in this directory).')
-					else:
-						if purpose == 'new':
-							# writes info
-						elif purpose == 'existing':
-							# appends info
-						file.close()
-						break
-				break
+				try:
+					if purpose == 'new':
+						# Creates new file with designated file name
+						file = open(file_name, 'x')
+						# Opens file in write mode
+						file = open(file_name, 'w')
+					elif purpose == 'existing':
+						# Opens file in append mode
+						file = open(file_name, 'a')
+				except FileExistsError:
+					print('Error, file already exists. Please enter a NEW file name.')
+				except FileNotFoundError:
+					print('Error, file not found. Please enter the name of an EXISTING file (in this directory).')
+				else:
+					for entry in book_list:
+						# Writes each entry (title, author, and rating) on one line separated by spaces
+						file.write(entry + ' ' + entry[0] + ' ' + str(entry[1]))
+					file.close()
+					break
 
 	print('You have chosen option 2, to save your current book list.')
 
@@ -805,6 +805,7 @@ def load_booklist():
 	'''
 	book_list = {}
 
+	#code 
 
 	return book_list
 
@@ -826,6 +827,8 @@ If any errors occur, or if you have any inquiries,
 please contact Rebecca Dang at ph.rdang@gmail.com
 
 """
+# Controls MAIN MENU while loop
+program_running = True
 
 # Initial message when the program starts up
 print("Welcome to the Book List!")
@@ -833,8 +836,8 @@ print("Welcome to the Book List!")
 # This is the Book List dictionary that is created at the start of the program.
 book_list_dict = {}
 
-# Infinite while loop. Serves as the MAIN MENU.
-while True:
+# While loop serves as the MAIN MENU
+while program_running:
 	sleep(1)
 	print("""
 --- MAIN MENU --- 
@@ -865,23 +868,63 @@ Would you like to:
 
 		# Option 4: Exits the program.
 		elif user_input == "4":
-			# Asks user for confirmation about exiting the program. 
-			print("""You have chosen option 4, to exit the program.
+			# Asks user if they want to save information (or return to MAIN MENU) 
+			print("""You have chosen option 4, to exit the program. 
+
+Would you like to save the information you have inputted during this session for retrieval in the future?
+	(Y) Yes
+	(N) No
+
+	(R) Return to MAIN MENU
+
+""")
+			while True:
+				acceptable_input = ['Y', 'N', 'R']
+				try:
+					user_input = input('Enter Y, N, or R: ')
+					assert user_input in acceptable_input
+				except AssertionError:
+					print('Error, please enter Y, N, or R.')
+				else:
+					# Save session information 
+					if user_input.upper() == 'Y':
+						save_booklist(book_list_dict)
+						# After saving information, goes directly into exiting the program
+						# Print credits
+						for line in credits.splitlines():
+								print(line)
+								sleep(0.3)
+							sleep(1)
+						# Exit out of MAIN MENU while loop
+						program_running = False
+						# Break out of current while loop
+						break
+					elif user_input.upper() == 'N':
+						# Asks user for confirmation about exiting the program without saving
+						print("""You have chosen to exit right away WITHOUT saving any information during this session.
 
 Are you sure you want to exit? All information you have inputted during this 
 session will be PERMANENTLY erased. Continue?
 	(Y) Yes
 	(N) No
 		
-	Any other character besides 'Y' will be considered 'No.'
-""")
-			user_input = input("Enter Y or N: ")
+	Any other character besides 'Y' will be considered 'No' and will return you to MAIN MENU.
 
-			# If user confirms exit, infinite loop breaks and program stops.
-			if user_input == "Y":
-				for line in credits.splitlines():
-					print(line)
-					sleep(0.3)
-				sleep(1)
-				print("Thank you for using Book List! You have successfully exited the program.")
-				break
+""")
+						user_input = input("Enter Y or N: ")
+						# If user confirms exit, infinite loop breaks and program stops.
+						if user_input.upper() == "Y":
+							# Print credits
+							for line in credits.splitlines():
+								print(line)
+								sleep(0.3)
+							sleep(1)
+							# Exit out of MAIN MENU while loop
+							program_running = False
+							# Break out of current while loop
+							break
+					# Return to MAIN MENU
+					elif user_input.upper() == 'R':
+						break
+
+print("Thank you for using Book List! You have successfully exited the program.")
