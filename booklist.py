@@ -840,8 +840,21 @@ please contact Rebecca Dang at ph.rdang@gmail.com
 # Initial message when the program starts up
 print("Welcome to the Book List!")
 
-# This is the Book List dictionary that is created at the start of the program.
-book_list_dict = {}
+# Asks user if they want to load previous session data
+user_input = input('''Would you like to load a information from a previous Book List session? 
+	(Y) Yes
+	(N) No
+
+Any character besides 'Y' will be considered 'No'.
+
+Enter Y or N: ''')
+
+if user_input.upper() == 'Y':
+	# Book List dictionary loads data from previous session
+	book_list_dict = load_booklist()
+else:
+	# Book List dictionary is initialized as empty
+	book_list_dict = {}
 
 # While loop serves as the MAIN MENU
 while True:
@@ -886,7 +899,7 @@ Would you like to save the information you have inputted during this session for
 
 """)
 			while True:
-				acceptable_input = ['Y', 'N', 'R']
+				acceptable_input = ['y', 'Y', 'n', 'N', 'r', 'R']
 				try:
 					user_input = input('Enter Y, N, or R: ')
 					assert user_input in acceptable_input
