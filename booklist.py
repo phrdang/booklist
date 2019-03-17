@@ -79,6 +79,7 @@ NAO scrapped:
 """
 from time import sleep
 from re import findall
+import os.path
 
 # Troubleshooting instructions for user for inputting book titles
 book_title_troubleshoot = """
@@ -714,85 +715,93 @@ def save_booklist(book_list):
 			try:
 				file_name = input('Name of %s file: ' % (purpose))
 				print()
-				assert not findall(regex, file_name)
-			# Raises an error if user entered a file name that contains characters that are NOT
-			# letters, numbers, or whitespace, as defined in the regex variable
+
+				# file_name must be made up of ONLY letters, numbers, and spaces; 
+				# NOT be empty/just whitespace; and 
+				# NOT include the .txt file extension
+				assert not findall(regex, file_name) and file_name and '.txt' not in file_name
+
+				# If trying to enter a new file, it must also NOT exist in the current directory
+				if purpose == 'new':
+					assert not os.path.isfile(file_name + '.txt')
+				
+				# If trying to enter an existing file, it must also exist in the current directory
+				if purpose == 'existing':
+					assert os.path.isfile(file_name + '.txt')
+				
 			except AssertionError:
-				print('Error, please enter a file name that contains ONLY letters, numbers, and/or spaces. (No symbols!)')
+				# If file_name is empty
+				if not file_name:
+					print('Error, you did not enter a file name. Please try again.')
+
+				# If file_name fails regex test
+				if findall(regex, file_name):
+					print('Error, please enter a file name that contains ONLY letters, numbers, and/or spaces. No symbols!')
+
+				# If extension is included in file name
+				if '.txt' in file_name:
+					print('Error, please do not include the .txt file extension when entering the file name.')
+
+				# If user trying to save to a new file and the file already exists in the current directory
+				if purpose == 'new' and os.path.isfile(file_name + '.txt'):
+					print('Error, file already exists. Please enter a NEW file name.')
+
+				# If user trying to save to an existing file and the file DOES NOT exist in the current directory
+				if purpose == 'existing' and not os.path.isfile(file_name + '.txt'):
+					print('Error, file not found. Please enter the name of an EXISTING file (in this directory).')
+
 			else:
 				# Adds .txt file extension
-				file_name = file_name + '.txt'
-				try:
-					if purpose == 'new':
-						# Creates new file with designated file name
-						file = open(file_name, 'x')
-						# Opens file in write mode
-						file = open(file_name, 'w')
-					elif purpose == 'existing':
-						# Opens file in append mode
-						file = open(file_name, 'a')
-				except FileExistsError:
-					print('Error, file already exists. Please enter a NEW file name.')
-				except FileNotFoundError:
-					print('Error, file not found. Please enter the name of an EXISTING file (in this directory).')
-				else:
-					for entry in book_list:
-						# Writes each entry (title, author, and rating) on one line separated by spaces
-						file.write(entry + ' ' + entry[0] + ' ' + str(entry[1]))
-					file.close()
-					break
+				file_name += '.txt'
 
-	print('You have chosen option 2, to save your current book list.')
+				if purpose == 'new':
+					# Creates new file with designated file name
+					file = open(file_name, 'x')
+					# Opens file in write mode
+					file = open(file_name, 'w')
 
-	save_book_1 = True
+				elif purpose == 'existing':
+					# Opens file in append mode
+					file = open(file_name, 'a')
 
-	while save_book_1:
+				for entry in book_list:
+					# Writes each entry (title, author, and rating) on one line separated by two slashes
+					# Isn't separated by spaces so that splitting can happen correctly during load_booklist
+								#title       #author            #rating
+					file.write(entry + '//' + book_list[entry][0] + '//' + str(book_list[entry][1]) + '\n')
+
+				file.close()
+				# After saving information, goes directly into exiting the program
+				print('Book List has been saved successfully as %s. You are now exiting the program...' % (file_name))
+				print()
+				sleep(1)
+
+				# Exit file name input while loop
+				break
+
+	print('You have chosen YES, to save the information you have inputted during this session.')
+
+	while True:
 		acceptable_input = ['1', '2']
 		try:
-			user_input = input('''	--- SAVE BOOK LIST MENU --- 
-			(1) SAVE all information on the book list
+			user_input = input('''	--- SAVE BOOK LIST MENU ---
+		(1) Save information on an EXISTING FILE
+		(2) Save information on a NEW FILE
 
-			(2) Return to MAIN MENU
-		''')
+Enter 1 or 2: ''')
 			print()
 			assert user_input in acceptable_input
 		except AssertionError:
 			print("Sorry, I didn't understand. Please enter 1 or 2.")
 		else:
-			# Option 1 of SAVE BOOK MENU 1: Save all info
+			# Option 1 of SAVE BOOK MENU 2: Save on existing file
 			if user_input == '1':
-				save_book_2 = True
-				while save_book_2:
-					acceptable_input = ['1', '2', '3']
-					try:
-						user_input = input('''		--- SAVE BOOK LIST MENU 2 ---
-				(1) Save information on an EXISTING FILE
-				(2) Save information on a NEW FILE
-
-				(3) Return to MAIN MENU
-				''')
-						print()
-						assert user_input in acceptable_input
-					except AssertionError:
-						print("Sorry, I didn't understand. Please enter 1, 2, or 3.")
-					else:
-						# Option 1 of SAVE BOOK MENU 2: Save on existing file
-						if user_input == '1':
-							write_file('old', book_list)
-						# Option 2 of SAVE BOOK MENU 2: Save on new file
-						elif user_input == '2':
-							write_file('existing', book_list)
-						# Option 3 of SAVE BOOK MENU 3: Return to MAIN MENU
-						elif user_input == '3':
-							# Exit SAVE BOOK MENU 2 while loop
-							save_book_2 = False
-							# Exit SAVE BOOK MENU while loop
-							save_book_1 = False
-
-			# Option 2 of SAVE BOOK MENU 1: Return to MAIN MENU
+				write_file('existing', book_list)
+			# Option 2 of SAVE BOOK MENU 2: Save on new file
 			elif user_input == '2':
-				# Exit SAVE BOOK LIST MENU while loop
-				save_book_1 = False
+				write_file('new', book_list)
+			# After executing option 1 or 2, exits SAVE BOOK MENU while loop to exit
+			break
 
 def load_booklist():
 	'''
@@ -827,8 +836,6 @@ If any errors occur, or if you have any inquiries,
 please contact Rebecca Dang at ph.rdang@gmail.com
 
 """
-# Controls MAIN MENU while loop
-program_running = True
 
 # Initial message when the program starts up
 print("Welcome to the Book List!")
@@ -837,7 +844,7 @@ print("Welcome to the Book List!")
 book_list_dict = {}
 
 # While loop serves as the MAIN MENU
-while program_running:
+while True:
 	sleep(1)
 	print("""
 --- MAIN MENU --- 
@@ -886,45 +893,40 @@ Would you like to save the information you have inputted during this session for
 				except AssertionError:
 					print('Error, please enter Y, N, or R.')
 				else:
-					# Save session information 
-					if user_input.upper() == 'Y':
-						save_booklist(book_list_dict)
-						# After saving information, goes directly into exiting the program
-						# Print credits
-						for line in credits.splitlines():
-								print(line)
-								sleep(0.3)
-							sleep(1)
-						# Exit out of MAIN MENU while loop
-						program_running = False
-						# Break out of current while loop
-						break
-					elif user_input.upper() == 'N':
-						# Asks user for confirmation about exiting the program without saving
-						print("""You have chosen to exit right away WITHOUT saving any information during this session.
+					# Option R automatically happens because of this break statement
+					break
+
+			# Save session information 
+			if user_input.upper() == 'Y':
+				save_booklist(book_list_dict)
+				# Print credits
+				for line in credits.splitlines():
+						print(line)
+						sleep(0.3)
+				sleep(1)
+				# Exit out of MAIN MENU while loop
+				break
+			elif user_input.upper() == 'N':
+				# Asks user for confirmation about exiting the program without saving
+				print("""You have chosen to exit right away WITHOUT saving any information during this session.
 
 Are you sure you want to exit? All information you have inputted during this 
 session will be PERMANENTLY erased. Continue?
 	(Y) Yes
 	(N) No
-		
-	Any other character besides 'Y' will be considered 'No' and will return you to MAIN MENU.
+
+Any other character besides 'Y' will be considered 'No' and will return you to MAIN MENU.
 
 """)
-						user_input = input("Enter Y or N: ")
-						# If user confirms exit, infinite loop breaks and program stops.
-						if user_input.upper() == "Y":
-							# Print credits
-							for line in credits.splitlines():
-								print(line)
-								sleep(0.3)
-							sleep(1)
-							# Exit out of MAIN MENU while loop
-							program_running = False
-							# Break out of current while loop
-							break
-					# Return to MAIN MENU
-					elif user_input.upper() == 'R':
-						break
-
+				user_input = input("Enter Y or N: ")
+				# If user confirms exit, infinite loop breaks and program stops.
+				if user_input.upper() == "Y":
+					# Print credits
+					for line in credits.splitlines():
+						print(line)
+						sleep(0.3)
+					sleep(1)
+					# Exit out of MAIN MENU while loop
+					break
+					
 print("Thank you for using Book List! You have successfully exited the program.")
