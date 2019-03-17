@@ -78,6 +78,7 @@ NAO scrapped:
 #4
 """
 from time import sleep
+from re import findall
 
 # Troubleshooting instructions for user for inputting book titles
 book_title_troubleshoot = """
@@ -694,7 +695,104 @@ def save_booklist(book_list):
 
 	Returns: None
 	'''
-	#code
+
+	def write_file(purpose, book_list):
+		'''
+		purpose: str, either 'new' or 'existing' to denote whether 
+		the user wants to save the current book list on a new or existing file
+
+		book_list: dict, current book_list_dict
+		
+		Writes all information currently on the booklist 
+		to either a new or old .txt file
+
+		Returns: None
+		'''
+		regex = '[a-zA-Z0-9\s]'
+
+		while True:
+			try:
+				file_name = input('Name of %s file: ' % (purpose))
+				print()
+				assert not findall(regex, file_name)
+			# Raises an error if user entered a file name that contains characters that are NOT
+			# letters, numbers, or whitespace, as defined in the regex variable
+			except AssertionError:
+				print('Error, please enter a file name that contains ONLY letters, numbers, and/or spaces. (No symbols!)')
+			else:
+				file_name = file_name + '.txt'
+				while True:
+					try:
+						if purpose == 'new':
+							# Creates new file with designated file name
+							file = open(file_name, 'x')
+						elif purpose == 'existing':
+							# Opens file in append mode
+							file = open(file_name, 'a')
+					except FileExistsError:
+						print('Error, file already exists. Please enter a NEW file name.')
+					except FileNotFoundError:
+						print('Error, file not found. Please enter the name of an EXISTING file (in this directory).')
+					else:
+						if purpose == 'new':
+							# writes info
+						elif purpose == 'existing':
+							# appends info
+						file.close()
+						break
+				break
+
+	print('You have chosen option 2, to save your current book list.')
+
+	save_book_1 = True
+
+	while save_book_1:
+		acceptable_input = ['1', '2']
+		try:
+			user_input = input('''	--- SAVE BOOK LIST MENU --- 
+			(1) SAVE all information on the book list
+
+			(2) Return to MAIN MENU
+		''')
+			print()
+			assert user_input in acceptable_input
+		except AssertionError:
+			print("Sorry, I didn't understand. Please enter 1 or 2.")
+		else:
+			# Option 1 of SAVE BOOK MENU 1: Save all info
+			if user_input == '1':
+				save_book_2 = True
+				while save_book_2:
+					acceptable_input = ['1', '2', '3']
+					try:
+						user_input = input('''		--- SAVE BOOK LIST MENU 2 ---
+				(1) Save information on an EXISTING FILE
+				(2) Save information on a NEW FILE
+
+				(3) Return to MAIN MENU
+				''')
+						print()
+						assert user_input in acceptable_input
+					except AssertionError:
+						print("Sorry, I didn't understand. Please enter 1, 2, or 3.")
+					else:
+						# Option 1 of SAVE BOOK MENU 2: Save on existing file
+						if user_input == '1':
+							write_file('old', book_list)
+						# Option 2 of SAVE BOOK MENU 2: Save on new file
+						elif user_input == '2':
+							write_file('existing', book_list)
+						# Option 3 of SAVE BOOK MENU 3: Return to MAIN MENU
+						elif user_input == '3':
+							# Exit SAVE BOOK MENU 2 while loop
+							save_book_2 = False
+							# Exit SAVE BOOK MENU while loop
+							save_book_1 = False
+
+			# Option 2 of SAVE BOOK MENU 1: Return to MAIN MENU
+			elif user_input == '2':
+				# Exit SAVE BOOK LIST MENU while loop
+				save_book_1 = False
 
 def load_booklist():
 	'''
@@ -705,7 +803,10 @@ def load_booklist():
 
 	Returns: dict, a prior book_list_dict
 	'''
-	#code
+	book_list = {}
+
+
+	return book_list
 
 credits = """
 			CREDITS
