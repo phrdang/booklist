@@ -893,7 +893,7 @@ Project Started: 27 Sept 2018
 Project Completed: 
 	Version 1: 30 Sept 2018 
 	Version 2: 15 March 2019
-	Version 3: [in progress]
+	Version 3: 17 March 2019
 Programming Language: Python 
 Workspace: Sublime, Visual Studio Code
 Special Thanks to: 
