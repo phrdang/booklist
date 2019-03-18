@@ -855,8 +855,12 @@ def load_booklist():
 	book_list = {}
 
 	while True:
-		file_name = input('Name of file to load: ')
+		file_name = input('Name of file to load, or type in "c" to cancel and go to MAIN MENU: ')
 		print()
+		# Cancels loading process
+		if file_name.lower() == 'c':
+			# Go to main menu
+			break
 		if '.txt' not in file_name[-3:]:
 			file_name += '.txt'
 		try:
