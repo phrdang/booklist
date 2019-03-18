@@ -848,8 +848,18 @@ def load_booklist():
 	'''
 	book_list = {}
 
-	#code 
-
+	while True:
+		file_name = input('Name of file to load: ')
+		print()
+		if '.txt' not in file_name[-3:]:
+			file_name += '.txt'
+		try:
+			assert valid_booklist_file(file_name)
+		except AssertionError:
+			print('Error, %s is not a valid booklist file. Please try another file.' % (file_name))
+		else:
+			# load booklist
+		
 	return book_list
 
 credits = """
