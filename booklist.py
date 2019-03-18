@@ -698,7 +698,16 @@ def valid_booklist_file(file_name):
 		-True if file is a valid booklist file
 		-False if it is not
 	'''
-	#code
+
+	try:
+		file = open(file_name, 'r')
+	except FileNotFoundError:
+		return False
+	else:
+		if 'NEW BOOKLIST FILE CREATED: ' in file.readline():
+			return True
+		else:
+			return False
 
 def save_booklist(book_list):
 	'''
