@@ -79,7 +79,8 @@ NAO scrapped:
 """
 from time import sleep
 from re import findall
-import os.path
+from os. path import isfile
+from datetime import datetime
 
 # Troubleshooting instructions for user for inputting book titles
 book_title_troubleshoot = """
@@ -687,6 +688,18 @@ def edit_book():
 					# Exits EDIT BOOK MENU 1 while loop
 					edit_book_1 = False
 
+def valid_booklist_file(file_name):
+	'''
+	file_name: str, name of a file (with file extension)
+
+	Checks if file is a valid booklist file
+
+	Returns: boolean
+		-True if file is a valid booklist file
+		-False if it is not
+	'''
+	#code
+
 def save_booklist(book_list):
 	'''
 	book_list: dict, current book_list_dict
@@ -723,11 +736,12 @@ def save_booklist(book_list):
 
 				# If trying to enter a new file, it must also NOT exist in the current directory
 				if purpose == 'new':
-					assert not os.path.isfile(file_name + '.txt')
+					assert not isfile(file_name + '.txt')
 				
 				# If trying to enter an existing file, it must also exist in the current directory
+				# AND it must be a valid booklist file
 				if purpose == 'existing':
-					assert os.path.isfile(file_name + '.txt')
+					assert isfile(file_name + '.txt') and valid_booklist_file(file_name + '.txt')
 				
 			except AssertionError:
 				# If file_name is empty
@@ -743,12 +757,16 @@ def save_booklist(book_list):
 					print('Error, please do not include the .txt file extension when entering the file name.')
 
 				# If user trying to save to a new file and the file already exists in the current directory
-				if purpose == 'new' and os.path.isfile(file_name + '.txt'):
+				if purpose == 'new' and isfile(file_name + '.txt'):
 					print('Error, file already exists. Please enter a NEW file name.')
 
 				# If user trying to save to an existing file and the file DOES NOT exist in the current directory
-				if purpose == 'existing' and not os.path.isfile(file_name + '.txt'):
+				if purpose == 'existing' and not isfile(file_name + '.txt'):
 					print('Error, file not found. Please enter the name of an EXISTING file (in this directory).')
+				
+				# If user trying to save to an existing file that is NOT a valid booklist file
+				if purpose == 'existing' and not valid_booklist_file(file_name + '.txt'):
+					print('Error, the file you chose is not a valid booklist file. Please choose a valid one.')
 
 			else:
 				# Adds .txt file extension
@@ -759,10 +777,17 @@ def save_booklist(book_list):
 					file = open(file_name, 'x')
 					# Opens file in write mode
 					file = open(file_name, 'w')
+					# Writes header for later validation during load_booklist
+					file.write('NEW BOOKLIST FILE CREATED: ')
 
 				elif purpose == 'existing':
 					# Opens file in append mode
 					file = open(file_name, 'a')
+					# Writes header for later validation during load_booklist
+					file.write('BOOKLIST FILE MODIFIED: ')
+
+				# Writes current date and time for record keeping
+				file.write(str(datetime.now()) + '\n')
 
 				for entry in book_list:
 					# Writes each entry (title, author, and rating) on one line separated by two slashes
