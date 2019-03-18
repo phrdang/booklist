@@ -82,11 +82,16 @@ VERSION 3 IS NOW COMPLETE!
 
 NAO completed:
 #2
+
+-print all valid booklist files in directory before asking for file name input
+-print all books after loading
+-add cancel option when in SAVE BOOKLIST MENU
 """
 from time import sleep
 from re import findall
-from os. path import isfile
+from os.path import isfile
 from datetime import datetime
+from os import listdir
 
 # Troubleshooting instructions for user for inputting book titles
 book_title_troubleshoot = """
@@ -722,7 +727,9 @@ def save_booklist(book_list):
 	Saves all information currently on the booklist on a .txt file
 	in a way such that users can retrieve past sessions.
 
-	Returns: None
+	Returns: 
+		-True if booklist was saved
+		-False if save process was cancelled
 	'''
 
 	def write_file(purpose, book_list):
@@ -743,7 +750,7 @@ def save_booklist(book_list):
 			try:
 				file_name = input('Name of %s file: ' % (purpose))
 				print()
-
+					
 				# file_name must be made up of ONLY letters, numbers, and spaces; 
 				# NOT be empty/just whitespace; and 
 				# NOT include the .txt file extension
@@ -816,32 +823,37 @@ def save_booklist(book_list):
 				print()
 				sleep(1)
 
-				# Exit file name input while loop
+				# Exit file input while loop
 				break
 
 	print('You have chosen YES, to save the information you have inputted during this session.')
 
 	while True:
-		acceptable_input = ['1', '2']
+		acceptable_input = ['1', '2', 'c', 'C']
 		try:
 			user_input = input('''	--- SAVE BOOK LIST MENU ---
 		(1) Save information on an EXISTING FILE
 		(2) Save information on a NEW FILE
 
-Enter 1 or 2: ''')
+		(C) Cancel
+
+Enter 1, 2, or C: ''')
 			print()
 			assert user_input in acceptable_input
 		except AssertionError:
-			print("Sorry, I didn't understand. Please enter 1 or 2.")
+			print("Sorry, I didn't understand. Please enter 1, 2, or C.")
 		else:
 			# Option 1 of SAVE BOOK MENU 2: Save on existing file
 			if user_input == '1':
 				write_file('existing', book_list)
+				return True
 			# Option 2 of SAVE BOOK MENU 2: Save on new file
 			elif user_input == '2':
 				write_file('new', book_list)
-			# After executing option 1 or 2, exits SAVE BOOK MENU while loop to exit
-			break
+				return True
+			# Option C: Cancel, return to MAIN MENU
+			elif user_input.upper() == 'C':
+				return False
 
 def load_booklist():
 	'''
@@ -853,18 +865,43 @@ def load_booklist():
 	Returns: dict, a prior book_list_dict
 	'''
 	book_list = {}
+	valid_files = []
+	# Controls while loop for file name entry
+	enter_file = True
 
-	while True:
+	# For all files in the current directory
+	for file in listdir():
+		# If file is a .txt file (to avoid errors with other types of files)
+		if file[-4:] == '.txt':
+			# If file is a valid booklist file
+			if valid_booklist_file(file):
+				# Add file to valid_file list
+				valid_files.append(file)
+	
+	print('Valid Book List Files:')
+	print()
+
+	# If there is at least 1 valid booklist file
+	if valid_files:
+		# Print the file(s)
+		for file in valid_files:
+			print(file)
+	# If there are no valid files
+	else:
+		print("Uh oh! There aren't any valid booklist files in this directory. Please save a file before loading one.")
+		enter_file = False
+
+	while enter_file:
 		file_name = input('Name of file to load, or type in "c" to cancel and go to MAIN MENU: ')
 		print()
 		# Cancels loading process
 		if file_name.lower() == 'c':
 			# Go to main menu
 			break
-		if '.txt' not in file_name[-3:]:
+		if '.txt' not in file_name[-4:]:
 			file_name += '.txt'
 		try:
-			assert valid_booklist_file(file_name)
+			assert file_name in valid_files
 		except AssertionError:
 			print('Error, this is not a valid booklist file. Please try another file.')
 		else:
@@ -895,9 +932,10 @@ credits = """
 Author: Rebecca Dang
 Project Started: 27 Sept 2018
 Project Completed: 
-	Version 1: 30 Sept 2018 
-	Version 2: 15 March 2019
-	Version 3: 17 March 2019
+	Version 1: 30 Sept 2018 | Basic add/retrieve/edit functionality
+	Version 2: 15 March 2019 | Update syntax for python3, make code cleaner, & misc. edits
+	Version 3: 17 March 2019 | Add load/save functionality
+	Version 4: [in progress] | Use classes
 Programming Language: Python 
 Workspace: Sublime, Visual Studio Code
 Special Thanks to: 
@@ -925,6 +963,10 @@ Enter Y or N: ''')
 if user_input.upper() == 'Y':
 	# Book List dictionary loads data from previous session
 	book_list_dict = load_booklist()
+	# If a previous booklist was loaded
+	if book_list_dict:
+		# Print all info on the booklist for confirmation
+		print_all_books()
 else:
 	# Book List dictionary is initialized as empty
 	book_list_dict = {}
@@ -984,14 +1026,20 @@ Would you like to save the information you have inputted during this session for
 
 			# Save session information 
 			if user_input.upper() == 'Y':
-				save_booklist(book_list_dict)
-				# Print credits
-				for line in credits.splitlines():
-						print(line)
-						sleep(0.3)
-				sleep(1)
-				# Exit out of MAIN MENU while loop
-				break
+				# If save process was successful
+				if save_booklist(book_list_dict):
+					# Print credits
+					for line in credits.splitlines():
+							print(line)
+							sleep(0.3)
+					sleep(1)
+					# Exit out of MAIN MENU while loop
+					break
+				# Save process was cancelled
+				else:
+					print('Save process cancelled.')
+					sleep(1)
+
 			elif user_input.upper() == 'N':
 				# Asks user for confirmation about exiting the program without saving
 				print("""You have chosen to exit right away WITHOUT saving any information during this session.
