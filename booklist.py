@@ -76,6 +76,12 @@ NAO added:
 
 NAO scrapped:
 #4
+
+UPDATE: March 17, 2019
+VERSION 3 IS NOW COMPLETE!
+
+NAO completed:
+#2
 """
 from time import sleep
 from re import findall
@@ -856,10 +862,28 @@ def load_booklist():
 		try:
 			assert valid_booklist_file(file_name)
 		except AssertionError:
-			print('Error, %s is not a valid booklist file. Please try another file.' % (file_name))
+			print('Error, this is not a valid booklist file. Please try another file.')
 		else:
-			# load booklist
-		
+			file = open(file_name, 'r')
+			for line in file:
+				# If the line is not a header, load the data
+				if 'NEW BOOKLIST FILE CREATED' not in line and 'BOOKLIST FILE MODIFIED' not in line:
+					# Creates a list of strings of data (title, author, rating) by splitting the line using the double slashes
+					entry = line.split('//')
+
+					title = entry[0]
+					author = entry[1]
+					rating = int(entry[2])
+
+					# Adds data to book_list dict
+					book_list[title] = [author, rating]
+
+			# Confirmation message
+			sleep(1)
+			print('Success! %s has been loaded.' % (file_name))
+
+			break
+
 	return book_list
 
 credits = """
