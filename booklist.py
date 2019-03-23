@@ -86,6 +86,13 @@ NAO completed:
 -print all valid booklist files in directory before asking for file name input
 -print all books after loading
 -add cancel option when in SAVE BOOKLIST MENU
+
+UPDATE: March 22, 2019
+NAO added:
+10. Use merge sort to print all books by author and rating
+11. Create functions (or methods if classes implemented) to 
+    calculate and display average rating of books by 
+	a certain author or of the entire booklist, to 2 decimals
 """
 from time import sleep
 from re import findall
