@@ -671,10 +671,10 @@ def edit_book():
 	Any other character besides 'Y' will be considered 'No.'
 	""")
 								user_input = input("Enter Y or N: ")
+								original_title = book 
 
 								# If confirmed, deletes the book
 								if user_input == "Y":
-									original_title = book 
 									del book_list_dict[book]
 									# Confirmation message. Original title is in UPPERCASE for ease of reading
 									sleep(1)
