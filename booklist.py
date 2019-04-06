@@ -93,6 +93,11 @@ NAO added:
 11. Create functions (or methods if classes implemented) to 
     calculate and display average rating of books by 
 	a certain author or of the entire booklist, to 2 decimals
+
+UPDATE March 30, 2019
+NAO added:
+12. Update save books function, remove purpsoe parameter b/c modified should overwrite
+(otherwise when you load it after deleting it will load the books that were deleted still)
 """
 from time import sleep
 from re import findall
