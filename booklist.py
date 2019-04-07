@@ -102,6 +102,7 @@ NAO added:
 UPDATE: April 6, 2019
 NAO completed:
 #10 (didn't need to use merge sort, just used key parameter for sorted function)
+#12
 """
 from time import sleep
 from re import findall
@@ -785,10 +786,11 @@ def valid_booklist_file(file_name):
 	except FileNotFoundError:
 		return False
 	else:
-		if 'NEW BOOKLIST FILE CREATED: ' in file.readline():
+		if 'BOOKLIST FILE' in file.readline():
 			return True
 		else:
 			return False
+		file.close()
 
 def save_booklist(book_list):
 	'''
@@ -874,7 +876,7 @@ def save_booklist(book_list):
 
 				elif purpose == 'existing':
 					# Opens file in append mode
-					file = open(file_name, 'a')
+					file = open(file_name, 'w')
 					# Writes header for later validation during load_booklist
 					file.write('BOOKLIST FILE MODIFIED: ')
 
@@ -884,7 +886,7 @@ def save_booklist(book_list):
 				for entry in book_list:
 					# Writes each entry (title, author, and rating) on one line separated by two slashes
 					# Isn't separated by spaces so that splitting can happen correctly during load_booklist
-								#title       #author            #rating
+							  #title          #author                      #rating
 					file.write(entry + '//' + book_list[entry][0] + '//' + str(book_list[entry][1]) + '\n')
 
 				file.close()
@@ -936,6 +938,7 @@ def load_booklist():
 	'''
 	book_list = {}
 	valid_files = []
+	timestamps = []
 	# Controls while loop for file name entry
 	enter_file = True
 
@@ -947,15 +950,46 @@ def load_booklist():
 			if valid_booklist_file(file):
 				# Add file to valid_file list
 				valid_files.append(file)
+
+				# Read header of file
+				file_text = open(file, 'r')
+				header = file_text.readline()
+				# Get timestamp (date and time modified or created)
+				timestamp = header.split(': ')[1]
+				# Add timestamp to timestamps list
+				timestamps.append('  |  %s: %s' % ('Created' if 'CREATED' in header else 'Modified', timestamp))
+
+				file_text.close()
+
+	def get_longest_filename(valid_files):
+		'''
+		valid_files: list of valid booklist files in the current directory 
+
+		Finds the length of the longest valid booklist filename in the current directory
+
+		Returns: int, length of the longest valid booklist filename in the current directory
+		'''
+		len_longest_filename = 0
+		
+		for file in valid_files:
+			temp = len(file)
+			if temp > len_longest_filename:
+				len_longest_filename = temp
+
+		return len_longest_filename
+
+	file_ljust = get_longest_filename(valid_files)
 	
+	print()
 	print('Valid Book List Files:')
 	print()
 
 	# If there is at least 1 valid booklist file
 	if valid_files:
-		# Print the file(s)
-		for file in valid_files:
-			print(file)
+		# Print the file(s) and timestamp(s)
+		for i in range(0, len(valid_files)):
+			print(valid_files[i].ljust(file_ljust), timestamps[i])
+		
 	# If there are no valid files
 	else:
 		print("Uh oh! There aren't any valid booklist files in this directory. Please save a file before loading one.")
@@ -978,7 +1012,7 @@ def load_booklist():
 			file = open(file_name, 'r')
 			for line in file:
 				# If the line is not a header, load the data
-				if 'NEW BOOKLIST FILE CREATED' not in line and 'BOOKLIST FILE MODIFIED' not in line:
+				if 'BOOKLIST FILE' not in line:
 					# Creates a list of strings of data (title, author, rating) by splitting the line using the double slashes
 					entry = line.split('//')
 
@@ -988,6 +1022,8 @@ def load_booklist():
 
 					# Adds data to book_list dict
 					book_list[title] = [author, rating]
+			
+			file.close()
 
 			# Confirmation message
 			sleep(1)
