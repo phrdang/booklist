@@ -91,7 +91,7 @@ NAO added:
     calculate and display average rating of books by 
 	a certain author or of the entire booklist, to 2 decimals
 
-UPDATE March 30, 2019
+UPDATE: March 30, 2019
 NAO added:
 12. Update save books function, remove purpose parameter b/c modified should overwrite
 (otherwise when you load it after deleting it will load the books that were deleted still)
@@ -100,3 +100,15 @@ UPDATE: April 6, 2019
 NAO completed:
 #10 (didn't need to use merge sort, just used key parameter for sorted function)
 #12
+
+UPDATE: April 7, 2019
+Progress check on NAOs below...
+
+NAO completed:
+#1, 2, 5, 7, 9, 10, 12
+
+NAO incomplete:
+#3, 6, 8, 11
+
+NAO scrapped:
+#4
