@@ -98,6 +98,10 @@ UPDATE March 30, 2019
 NAO added:
 12. Update save books function, remove purpsoe parameter b/c modified should overwrite
 (otherwise when you load it after deleting it will load the books that were deleted still)
+
+UPDATE: April 6, 2019
+NAO completed:
+#10 (didn't need to use merge sort, just used key parameter for sorted function)
 """
 from time import sleep
 from re import findall
@@ -415,7 +419,7 @@ def print_all_books():
 				longest_title = temp_longest_title
 
 		return longest_title
-	
+
 	def get_longest_author():
 		'''
 		Gets the (first) longest author in the Book List
@@ -438,20 +442,74 @@ def print_all_books():
 	title_ljust = len(longest_title) + 10
 	author_ljust = len(longest_author) + 10
 
-	print ("The following are all of the books in alphabetical order by title:")
-	print()
-	sleep(1)
+	def print_header():
+		'''
+		Prints the header of the print_all_books function
+		so that the columns are adequately spaced in terms
+		of the length of the longest author's name and
+		longest book title.
 
-	header = "TITLE".ljust(title_ljust) + "AUTHOR".ljust(author_ljust) + "RATING"
+		Returns: None
+		'''
+		header = "TITLE".ljust(title_ljust) + "AUTHOR".ljust(author_ljust) + "RATING"
+		print(header)
+		print("-"*len(header))
+		print()
 
-	print(header)
-	print("-"*len(header))
-	print()
+	print('''How would you like to print the booklist?
+	(1) Alphabetically by title
+	(2) Alphabetically by author last name
+	(3) Lowest to highest rating
 
-	# key = str.lower to be case insenitive sorting 
-	for book in sorted(book_list_dict, key = str.lower):
-		sleep(0.3)
-		print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
+ ''')
+
+	acceptable_input = ['1', '2', '3']
+
+	while True:
+		try:
+			user_input = input('Enter 1, 2, or 3: ')
+			assert user_input in acceptable_input
+		except AssertionError:
+			print('Error, please type in 1, 2, or 3.')
+		else:
+			# Alpha order by title
+			if user_input == '1':
+				print ("The following are all of the books in alphabetical order by title:")
+				print()
+				sleep(1)
+
+				print_header()
+
+				# key = str.lower to be case insenitive sorting 
+				for book in sorted(book_list_dict, key=str.lower):
+					sleep(0.3)
+					print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
+
+			# Alpha order by author last name
+			elif user_input == '2':
+				print('The following are all of the books in alphabetical order by author last name:')
+				print()
+				sleep(1)
+
+				print_header()
+
+				for book in sorted(book_list_dict, key=lambda x: book_list_dict[x][0].split()[1].lower()):
+					sleep(0.3)
+					print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
+
+			# Lowest to highest rating
+			elif user_input == '3':
+				print('The following are all of the books from lowest to highest rating:')
+				print()
+				sleep(1)
+
+				print_header()
+
+				for book in sorted(book_list_dict, key=lambda x: book_list_dict[x][1]):
+					sleep(0.3)
+					print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
+
+			break
 
 def edit_title(book):
 	'''
