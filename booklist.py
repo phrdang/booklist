@@ -96,7 +96,7 @@ NAO added:
 
 UPDATE March 30, 2019
 NAO added:
-12. Update save books function, remove purpsoe parameter b/c modified should overwrite
+12. Update save books function, remove purpose parameter b/c modified should overwrite
 (otherwise when you load it after deleting it will load the books that were deleted still)
 
 UPDATE: April 6, 2019
