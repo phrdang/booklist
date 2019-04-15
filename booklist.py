@@ -382,8 +382,8 @@ def print_all_books():
 
 				print_header()
 
-				# key = str.lower to be case insenitive sorting 
-				for book in sorted(book_list_dict, key=str.lower):
+				# sorting priority: title, author last name, rating
+				for book in sorted(book_list_dict, key=lambda x: (x.lower(), book_list_dict[x][0].split()[1].lower(), book_list_dict[x][1])):
 					sleep(0.3)
 					print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
 
@@ -395,7 +395,8 @@ def print_all_books():
 
 				print_header()
 
-				for book in sorted(book_list_dict, key=lambda x: book_list_dict[x][0].split()[1].lower()):
+				# sorting priority: author last name, title, rating
+				for book in sorted(book_list_dict, key=lambda x: (book_list_dict[x][0].split()[1].lower(), x.lower(), book_list_dict[x][1])):
 					sleep(0.3)
 					print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
 
@@ -407,7 +408,8 @@ def print_all_books():
 
 				print_header()
 
-				for book in sorted(book_list_dict, key=lambda x: book_list_dict[x][1]):
+				# sorting priority: rating, title, author last name
+				for book in sorted(book_list_dict, key=lambda x: (book_list_dict[x][1], x.lower(), book_list_dict[x][0].split()[1].lower())):
 					sleep(0.3)
 					print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
 
