@@ -116,3 +116,6 @@ NAO scrapped:
 UPDATE: April 10, 2019
 NAO scrapped:
 #3, classes part of #6
+
+UPDATE: June 18, 2019
+NAO: Fix last name ordering (Sarah J. Maas)
