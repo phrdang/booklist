@@ -12,7 +12,7 @@ from datetime import datetime
 from os import listdir
 
 # Troubleshooting instructions for user for inputting book titles
-book_title_troubleshoot = """
+BOOK_TITLE_TROUBLESHOOT = """
 --- BOOK TITLE INPUT TROUBLESHOOTING --
 
 If you're having trouble entering a valid book title, please check the following:
@@ -32,7 +32,7 @@ If you're having trouble entering a valid book title, please check the following
 """
 
 # Troubleshooting instructions for editing a book
-edit_troubleshoot = """
+EDIT_TROUBLESHOOT = """
 --- BOOK EDITING TROUBLESHOOTING ---
 
 >>> If you're having trouble editing a book, it is possible you made a typo while inputting the title of the book.
@@ -49,7 +49,7 @@ edit_troubleshoot = """
 """	
 
 # Troubleshooting instructions for retrieving info about a book
-retrieve_troubleshoot = """
+RETRIEVE_TROUBLESHOOT = """
 --- INFORMATION RETRIEVAL TROUBLESHOOTING ---
 
 >>> If you're having trouble retrieving information about a book, it is possible you made a typo while inputting the title of the book.
@@ -101,17 +101,17 @@ def title_input(purpose):
 					if issue_counter == 3:
 						# Prints out instructions on how to correctly type in a book title 
 						# if book doesn't exist in book_list_dict
-						for line in book_title_troubleshoot.splitlines():
+						for line in BOOK_TITLE_TROUBLESHOOT.splitlines():
 							print(line)
 							sleep(0.3)
 						if purpose == 'retrieve':
 							# Prints out retrieve troubleshoot instructions
-							for line in retrieve_troubleshoot.splitlines():
+							for line in RETRIEVE_TROUBLESHOOT.splitlines():
 								print(line)
 								sleep(0.3)
 						elif purpose == 'edit':
 							# Prints out edit troubleshoot instructions
-							for line in edit_troubleshoot.splitlines():
+							for line in EDIT_TROUBLESHOOT.splitlines():
 								print(line)
 								sleep(0.3)
 				# If the book does exist, exit while loop
@@ -129,7 +129,7 @@ def title_input(purpose):
 				if issue_counter == 3:
 					# Prints out instructions on how to correctly type in a book title 
 					# if book already exists in book_list_dict
-					for line in book_title_troubleshoot.splitlines():
+					for line in BOOK_TITLE_TROUBLESHOOT.splitlines():
 						print(line)
 						sleep(0.3)
 			# If book is a new book, exit while loop
