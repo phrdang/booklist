@@ -122,3 +122,4 @@ NAO: Fix last name ordering (Sarah J. Maas)
 
 UPDATE: June 20, 2019
 Finished NAO from June 18
+NAO: Option to read credits or not
