@@ -119,3 +119,6 @@ NAO scrapped:
 
 UPDATE: June 18, 2019
 NAO: Fix last name ordering (Sarah J. Maas)
+
+UPDATE: June 20, 2019
+Finished NAO from June 18
