@@ -396,7 +396,7 @@ def print_all_books():
 				print_header()
 
 				# sorting priority: author last name, title, rating
-				for book in sorted(book_list_dict, key=lambda x: (book_list_dict[x][0].split()[1].lower(), x.lower(), book_list_dict[x][1])):
+				for book in sorted(book_list_dict, key=lambda x: (book_list_dict[x][0].split()[-1].lower(), x.lower(), book_list_dict[x][1])):
 					sleep(0.3)
 					print(book.ljust(title_ljust) + book_list_dict[book][0].ljust(author_ljust) + str(book_list_dict[book][1]))
 
