@@ -1,3 +1,75 @@
+"""
+Welcome to the Book List (Class) project.
+Title: booklist-class.py
+Author: Rebecca Dang
+Date: June 20, 2019
+"""
+
+### IMPORT MODULES ###
+
+from time import sleep
+from re import findall
+from os.path import isfile
+from datetime import datetime
+from os import listdir
+
+### TROUBLESHOOTING INSTRUCTIONS ###
+
+# Troubleshooting instructions for user for inputting book titles
+BOOK_TITLE_TROUBLESHOOT = """
+--- BOOK TITLE INPUT TROUBLESHOOTING --
+
+If you're having trouble entering a valid book title, please check the following:
+
+>>> Spelling, capitalization, and spacing 
+	DO NOT type: the h8 Ugive
+	TYPE: The Hate U Give
+
+>>> Do not include the name of the series 
+	DO NOT type: Percy Jackson and the Olympians: The Lightning Thief
+	TYPE: The Lightning Thief
+
+>>> Do not include anything besides the title of the book
+	DO NOT type: Six of Crows by Leigh Bardugo
+	TYPE: Six of Crows
+
+"""
+
+# Troubleshooting instructions for editing a book
+EDIT_TROUBLESHOOT = """
+--- BOOK EDITING TROUBLESHOOTING ---
+
+>>> If you're having trouble editing a book, it is possible you made a typo while inputting the title of the book.
+
+>>> Follow these instructions:
+	1. Choose option 2 of the EDIT BOOK MENU 1.
+	2. Choose option 2 of the MAIN MENU.
+	3. Choose option 3 of the RETRIEVE INFO menu.
+	4. Note down the title of the book you were trying to find.
+	5. Choose option 3 of the MAIN MENU. 
+	6. Type in the incorrect title that you noted down in Step 3.
+	7. Update any incorrect information. 
+
+"""	
+
+# Troubleshooting instructions for retrieving info about a book
+RETRIEVE_TROUBLESHOOT = """
+--- INFORMATION RETRIEVAL TROUBLESHOOTING ---
+
+>>> If you're having trouble retrieving information about a book, it is possible you made a typo while inputting the title of the book.
+
+>>> Follow these instructions:
+	1. Choose option 3 of the RETRIEVE INFO menu.
+	2. Note down the title of the book you were trying to find. 
+	3. Choose option 3 of the MAIN MENU. 
+	4. Type in the incorrect title that you noted down in Step 2.
+	5. Update any incorrect information. 
+
+"""
+
+
+### BOOK CLASS ###
+
 class Book(object):
     id = 0
     def __init__(self, title, author, rating, genres, tags, series=None):
@@ -137,7 +209,7 @@ class Book(object):
         '''
         self.series = new_series
 
-# Test object
+### TEST CODE ###
 title = 'Six of Crows'
 author = 'Leigh Bardugo'
 rating = '5'
