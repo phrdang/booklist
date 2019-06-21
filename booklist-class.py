@@ -299,6 +299,41 @@ def title_input(purpose):
 
 	return title
 
+def author_input():
+	'''
+	Asks user for name of an author of a book
+
+	Returns: str, name of author inputted
+	'''
+
+	while True:
+		# Asks user for the author of the book
+		author = input("Author: ")
+		# Checks if user has inputted anything
+		if not author:
+			print("Sorry, you did not enter an author of the book.")
+		else:
+			return author
+
+def rating_input():
+	'''
+	Asks user for rating of a book
+
+	Returns: rating, an int from 1-5
+	'''
+
+	while True:
+		try:
+			rating = int(input("Rating (out of 5 stars): "))
+			# User input cannot be empty and rating must be an integer from 1-5 
+			assert rating and rating <= 5 and rating >= 1
+		except ValueError:
+			print("Error, please enter an integer.")
+		except AssertionError:
+			print("Error, please enter an integer between 1 and 5.")
+		else:
+			return rating
+
 ### TEST CODE ###
 title = 'Six of Crows'
 author = 'Leigh Bardugo'
