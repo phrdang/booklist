@@ -67,11 +67,15 @@ RETRIEVE_TROUBLESHOOT = """
 
 """
 
-
 ### BOOK CLASS ###
 
 class Book(object):
     id = 0
+    titles = []
+    authors = []
+    genres = []
+    tags = []
+    series = []
     def __init__(self, title, author, rating, genres, tags, series=None):
         '''
         Initializes the book object. 
@@ -86,6 +90,15 @@ class Book(object):
         self.genres = genres
         self.tags = tags
         self.series = series
+
+        Book.titles.append(title)
+        Book.authors.append(author)
+        # Both iterate to prevent lists inside of lists
+        for genre in genres:
+            Book.genres.append(genre)
+        for tag in tags:
+            Book.tags.append(tag)
+        Book.series.append(series)
 
         Book.id += 1
         self.id = Book.id
@@ -209,6 +222,83 @@ class Book(object):
         '''
         self.series = new_series
 
+### FUNCTIONS ###
+
+def title_input(purpose):
+	'''
+	Asks user for title of a book
+
+	purpose: str, the purpose of the function ('retrieve', 'edit', or 'add')
+
+	Returns: str, title of book from user input, formatted in a way so that the program can use the information
+	''' 
+
+	issue_counter = 0
+
+	while True:
+		# Asks user for the title of the book
+		title = input("Title: ")
+
+		# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
+		# This is for alphabetizing purposes. 
+		if title[:3] == "The":
+			title = title[4:] + ", The"
+
+		# Checks if user has inputted anything
+		if not title:
+			print("Sorry, you did not enter a title of the book.")
+			print()
+		# Else block runs if user has inputted something
+		else:
+			if purpose == 'retrieve' or purpose == 'edit':
+				# Error message if book the user wants to retrieve info about or edit does not exist
+				if title not in Book.titles:
+					print('Sorry, book not found in the Book List. Please type in the title of an EXISTING book.')
+					sleep(1)
+					print()
+					issue_counter += 1
+					# Only prints the long troubleshooting instructions if this is the 3rd time
+					# the user is having trouble (otherwise it gets annoying)
+					if issue_counter == 3:
+						# Prints out instructions on how to correctly type in a book title 
+						# if book doesn't exist in booklist
+						for line in BOOK_TITLE_TROUBLESHOOT.splitlines():
+							print(line)
+							sleep(0.3)
+						if purpose == 'retrieve':
+							# Prints out retrieve troubleshoot instructions
+							for line in RETRIEVE_TROUBLESHOOT.splitlines():
+								print(line)
+								sleep(0.3)
+						elif purpose == 'edit':
+							# Prints out edit troubleshoot instructions
+							for line in EDIT_TROUBLESHOOT.splitlines():
+								print(line)
+								sleep(0.3)
+				# If the book does exist, exit while loop
+				else:
+					break
+
+			# If block runs if user tries to create a new book that already exists in the Book List
+			if purpose == 'add' and title in Book.titles:
+				print("Sorry, this book already exists in the Book List. Please type in the title of a NEW book.")
+				sleep(1)
+				print()
+				issue_counter += 1
+				# Only prints the long troubleshooting instructions if this is the first time
+				# the user is having trouble (otherwise it gets annoying)
+				if issue_counter == 3:
+					# Prints out instructions on how to correctly type in a book title 
+					# if book already exists in booklist
+					for line in BOOK_TITLE_TROUBLESHOOT.splitlines():
+						print(line)
+						sleep(0.3)
+			# If book is a new book, exit while loop
+			elif purpose == 'add' and title not in Book.titles:
+				break
+
+	return title
+
 ### TEST CODE ###
 title = 'Six of Crows'
 author = 'Leigh Bardugo'
@@ -217,4 +307,6 @@ genres = ['YA', 'Fantasy']
 tags = ['kaz brekker', 'inej ghafa', 'ketterdam']
 series = 'Six of Crows Duology'
 soc_obj = Book(title, author, rating, genres, tags, series)
-print(soc_obj)
+# print(soc_obj)
+
+title_input('add')
