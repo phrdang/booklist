@@ -1037,11 +1037,16 @@ Would you like to save the information you have inputted during this session for
 			if user_input.upper() == 'Y':
 				# If save process was successful
 				if save_booklist(book_list_dict):
-					# Print credits
-					for line in credits.splitlines():
-							print(line)
-							sleep(0.3)
-					sleep(1)
+					user_input = input('Type "c" if you would like to view the credits. Otherwise, press Enter to exit \
+						(any character besides "c" will be considered "Enter"): ')
+
+					if user_input == 'c':
+						# Print credits
+						for line in credits.splitlines():
+								print(line)
+								sleep(0.3)
+						sleep(1)
+
 					# Exit out of MAIN MENU while loop
 					break
 				# Save process was cancelled
@@ -1064,11 +1069,16 @@ Any other character besides 'Y' will be considered 'No' and will return you to M
 				user_input = input("Enter Y or N: ")
 				# If user confirms exit, infinite loop breaks and program stops.
 				if user_input.upper() == "Y":
-					# Print credits
-					for line in credits.splitlines():
-						print(line)
-						sleep(0.3)
-					sleep(1)
+					user_input = input('Type "c" if you would like to view the credits. Otherwise, press Enter to exit: ')
+					
+					# Any character besides "c" or "C" is considered a direct exit
+					if user_input.lower() == 'c':
+						# Print credits
+						for line in credits.splitlines():
+								print(line)
+								sleep(0.3)
+						sleep(1)
+
 					# Exit out of MAIN MENU while loop
 					break
 					
