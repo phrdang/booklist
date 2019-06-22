@@ -123,3 +123,8 @@ NAO: Fix last name ordering (Sarah J. Maas)
 UPDATE: June 20, 2019
 Finished NAO from June 18
 NAO: Option to read credits or not
+
+UPDATE: June 21, 2019
+Remove duplicate entries from Book class variables when a new book is added
+Might need to add a purpose parameter to the input functions
+Fix title input because what if 2 books have the same title but diff author?

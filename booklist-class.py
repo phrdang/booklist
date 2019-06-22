@@ -76,7 +76,7 @@ class Book(object):
     genres = []
     tags = []
     series = []
-    def __init__(self, title, author, rating, genres, tags, series=None):
+    def __init__(self, title, author, rating, genres, tags, series):
         '''
         Initializes the book object. 
         title, author: str
@@ -91,17 +91,31 @@ class Book(object):
         self.tags = tags
         self.series = series
 
-        Book.titles.append(title)
-        Book.authors.append(author)
-        # Both iterate to prevent lists inside of lists
-        for genre in genres:
-            Book.genres.append(genre)
-        for tag in tags:
-            Book.tags.append(tag)
-        Book.series.append(series)
-
         Book.id += 1
         self.id = Book.id
+
+        # Add the new book's info to the overall pool of info
+        # which is stored in the Book class variables
+        # Check if the new info already exists in those lists
+        # If don't already exist, add them to the lists
+
+        Book.titles.append(title)
+
+        if author not in Book.authors:
+            Book.authors.append(author)
+
+        # Both genre and tag iterate to prevent lists inside of lists
+        for genre in genres:
+            if genre not in Book.genres:
+                Book.genres.append(genre)
+
+        for tag in tags:
+            if tag not in Book.tags:
+                Book.tags.append(tag)
+
+        if series not in Book.series:
+            Book.series.append(series)
+
     def __str__(self):
         # First line of info prints the title, author, and rating
         first = 'Title: %s | Author: %s | Rating: %s' % (self.title, self.author, self.rating)
@@ -334,6 +348,145 @@ def rating_input():
 		else:
 			return rating
 
+def series_input():
+	'''
+	Asks user for name of the series of a book
+
+	Returns: str, name of series inputted
+	'''
+
+	while True:
+		# Asks user for the series of the book
+		series = input("Series: ")
+		# Checks if user has inputted anything
+		if not series:
+			print("Sorry, you did not enter the series of the book.")
+		else:
+			return series
+
+def genres_input():
+    '''
+    Asks user for the genres of a book
+
+    Returns: list of str, genres
+    '''
+    genres = []
+    genre_counter = 0
+
+    # Asks user for the genre(s) of the book
+    print("What genre(s) does your book fall under? Enter ONE genre at a time. \
+Once you are done, type in 'd' and press Enter.")
+
+    while True:
+        genre_counter += 1
+        genre = input("Genre #%d: " % (genre_counter))
+        if not genre:
+            print("Sorry, you did not enter a genre of the book.")
+        elif genre.lower() == 'd':
+            break
+        else:
+            genres.append(genre)
+
+    return genres
+
+def tags_input():
+    '''
+    Asks user for the tags of a book
+
+    Returns: list of str, tags
+    '''
+    tags = []
+    tag_counter = 0
+
+    # Asks user for the tag(s) of the book
+    print("What is your book tagged as? This will help with searching for books. \
+Enter ONE tag at a time. Once you are done, type in 'd' and press Enter.")
+
+    while True:
+        tag_counter += 1
+        tag = input("Tag #%d: " % (tag_counter))
+        if not tag:
+            print("Sorry, you did not enter a tag for the book.")
+        elif tag.lower() == 'd':
+            break
+        else:
+            tags.append(tag)
+
+    return tags
+
+def new_book():
+    '''
+	Takes in user input to create a new Book object
+
+	Returns: None
+    '''
+    print('You have chosen option 1, to add a new book.')
+
+    while True:
+        # Asks the user for the title, author, and rating.
+        title = title_input('add')
+        author = author_input()
+        rating = rating_input()
+
+        # Asks user if the book is part of a series, and if it is,
+        # asks user to input the series name
+        # Any character besides "y" or "Y" is considered "No"
+        user_input = input('''Is this book part of a series?
+        (Y) Yes
+        (N) No
+Y or N: ''').lower()
+        if user_input == 'y':
+            series = series_input()
+        else:
+            series = None
+        
+        # Asks the user for the genres and tags
+        genres = genres_input()
+        tags = tags_input()
+
+        # Converts the self.genres list to a readable str
+        genres_str = ''
+        for genre in genres:
+            if genres[-1] == genre:
+                genres_str += genre
+            else:
+                genres_str += genre + ', '
+
+        # Converts the self.tags list to a readable str
+        tags_str = ''
+        for tag in tags:
+            if tags[-1] == tag:
+                tags_str += tag
+            else:
+                tags_str += tag + ', '
+
+        # Asks the user to confirm that the inputted info is correct
+        print("Is this correct?")
+        print()
+        print("Title:", title)
+        print("Author:", author)
+        print("Rating:", rating)
+        print("Series:", series)
+        print("Genres:", genres_str)
+        print("Tags:", tags_str)
+        print()
+
+        user_input = input("Y or N: ").lower()
+
+        # If the user confirms that it's correct then a new Book object
+        # is created and a confirmation is displayed.
+        if user_input == 'y':
+            book = Book(title, author, rating, genres, tags, series)
+            booklist.append(book)
+            sleep(1)
+            print("The book %s by %s has been added." % (title.upper(), author.upper()))
+            break
+        # Else, the program prompts the user to re-enter their information
+        else:
+            print("Please enter your information again.")
+
+booklist = []
+
 ### TEST CODE ###
 title = 'Six of Crows'
 author = 'Leigh Bardugo'
@@ -344,4 +497,8 @@ series = 'Six of Crows Duology'
 soc_obj = Book(title, author, rating, genres, tags, series)
 # print(soc_obj)
 
-title_input('add')
+new_book()
+print("Enter book #2")
+new_book()
+for book in booklist:
+    print(book)
