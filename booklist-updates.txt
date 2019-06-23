@@ -128,3 +128,4 @@ UPDATE: June 21, 2019
 Remove duplicate entries from Book class variables when a new book is added
 Might need to add a purpose parameter to the input functions
 Fix title input because what if 2 books have the same title but diff author?
+Might have to update troubleshooting instructions/add more

@@ -76,6 +76,7 @@ class Book(object):
     genres = []
     tags = []
     series = []
+    
     def __init__(self, title, author, rating, genres, tags, series):
         '''
         Initializes the book object. 
@@ -94,27 +95,22 @@ class Book(object):
         Book.id += 1
         self.id = Book.id
 
-        # Add the new book's info to the overall pool of info
-        # which is stored in the Book class variables
-        # Check if the new info already exists in those lists
-        # If don't already exist, add them to the lists
+        if title.lower() not in Book.titles:
+            Book.titles.append(title.lower())
+        
+        if author.lower() not in Book.authors:
+            Book.authors.append(author.lower())
 
-        Book.titles.append(title)
-
-        if author not in Book.authors:
-            Book.authors.append(author)
-
-        # Both genre and tag iterate to prevent lists inside of lists
         for genre in genres:
-            if genre not in Book.genres:
-                Book.genres.append(genre)
-
+            if genre.lower() not in Book.genres:
+                Book.genres.append(genre.lower())
+        
         for tag in tags:
-            if tag not in Book.tags:
-                Book.tags.append(tag)
+            if tag.lower() not in Book.tags:
+                Book.tags.append(tag.lower())
 
-        if series not in Book.series:
-            Book.series.append(series)
+        if series != None and series.lower() not in Book.series:
+            Book.series.append(series.lower())
 
     def __str__(self):
         # First line of info prints the title, author, and rating
@@ -238,80 +234,103 @@ class Book(object):
 
 ### FUNCTIONS ###
 
+'''
 def title_input(purpose):
-	'''
 	Asks user for title of a book
 
 	purpose: str, the purpose of the function ('retrieve', 'edit', or 'add')
 
 	Returns: str, title of book from user input, formatted in a way so that the program can use the information
-	''' 
+	 
+'''
 
-	issue_counter = 0
+def title_input(purpose):
+    '''
+    Asks user for title of a book
 
-	while True:
-		# Asks user for the title of the book
-		title = input("Title: ")
+    purpose: str, the purpose of the function ('retrieve', 'edit', or 'add')
 
-		# Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
-		# This is for alphabetizing purposes. 
-		if title[:3] == "The":
-			title = title[4:] + ", The"
+    Returns: str, title of book from user input, formatted
+    in a way so that the program can use the information
+    '''
 
-		# Checks if user has inputted anything
-		if not title:
-			print("Sorry, you did not enter a title of the book.")
-			print()
-		# Else block runs if user has inputted something
-		else:
-			if purpose == 'retrieve' or purpose == 'edit':
-				# Error message if book the user wants to retrieve info about or edit does not exist
-				if title not in Book.titles:
-					print('Sorry, book not found in the Book List. Please type in the title of an EXISTING book.')
-					sleep(1)
-					print()
-					issue_counter += 1
-					# Only prints the long troubleshooting instructions if this is the 3rd time
-					# the user is having trouble (otherwise it gets annoying)
-					if issue_counter == 3:
-						# Prints out instructions on how to correctly type in a book title 
-						# if book doesn't exist in booklist
-						for line in BOOK_TITLE_TROUBLESHOOT.splitlines():
-							print(line)
-							sleep(0.3)
-						if purpose == 'retrieve':
-							# Prints out retrieve troubleshoot instructions
-							for line in RETRIEVE_TROUBLESHOOT.splitlines():
-								print(line)
-								sleep(0.3)
-						elif purpose == 'edit':
-							# Prints out edit troubleshoot instructions
-							for line in EDIT_TROUBLESHOOT.splitlines():
-								print(line)
-								sleep(0.3)
-				# If the book does exist, exit while loop
-				else:
-					break
+    issue_counter = 0
 
-			# If block runs if user tries to create a new book that already exists in the Book List
-			if purpose == 'add' and title in Book.titles:
-				print("Sorry, this book already exists in the Book List. Please type in the title of a NEW book.")
-				sleep(1)
-				print()
-				issue_counter += 1
-				# Only prints the long troubleshooting instructions if this is the first time
-				# the user is having trouble (otherwise it gets annoying)
-				if issue_counter == 3:
-					# Prints out instructions on how to correctly type in a book title 
-					# if book already exists in booklist
-					for line in BOOK_TITLE_TROUBLESHOOT.splitlines():
-						print(line)
-						sleep(0.3)
-			# If book is a new book, exit while loop
-			elif purpose == 'add' and title not in Book.titles:
-				break
+    while True:
+        # Asks user for the title of the book
+        title = input("Title: ")
 
-	return title
+        # Checks if the title starts with the string 'The', then moves 'The' to the back of the title.
+        # This is for alphabetizing purposes. 
+        if title[:3] == "The":
+            title = title[4:] + ", The"
+
+        # Checks if user has inputted anything
+        if not title:
+            print("Sorry, you did not enter a title of the book.")
+            print()
+        
+        if purpose == 'retrieve' or purpose == 'edit':
+            # Error message if book the user wants to retrieve info about or edit does not exist
+            if title.lower() not in Book.titles:
+                print('Sorry, book not found in the Book List. Please type in the title of an EXISTING book.')
+                sleep(1)
+                print()
+                issue_counter += 1
+                # Only prints the long troubleshooting instructions if this is the 3rd time
+                # the user is having trouble (otherwise it gets annoying)
+                if issue_counter == 3:
+                    # Prints out instructions on how to correctly type in a book title 
+                    # if book doesn't exist in booklist
+                    for line in BOOK_TITLE_TROUBLESHOOT.splitlines():
+                        print(line)
+                        sleep(0.3)
+                    if purpose == 'retrieve':
+                        # Prints out retrieve troubleshoot instructions
+                        for line in RETRIEVE_TROUBLESHOOT.splitlines():
+                            print(line)
+                            sleep(0.3)
+                    elif purpose == 'edit':
+                        # Prints out edit troubleshoot instructions
+                        for line in EDIT_TROUBLESHOOT.splitlines():
+                            print(line)
+                            sleep(0.3)
+            # If the book does exist, exit while loop
+            else:
+                break
+
+        # If user tries to enter a title that already exists in the Book List
+        # Program will alert user to confirm whether they want to complete
+        # this action (because it might be same title diff author)
+        if purpose == 'add' and title.lower() in Book.titles:
+                for book in booklist:
+                    if book.get_title() == title:
+                        author = book.get_author()
+                        id = book.get_id()
+                print("This book title already exists in the Book List: %s by %s. ID: %d" % (title, author, id))
+                print("Are you trying to add a book by a different author with the same title?")
+
+                while True:
+                    try:
+                        user_input = input("Y or N: ")
+                        assert user_input.lower() == 'y' or user_input.lower() == 'n'
+                    except AssertionError:
+                        print("Error, please enter Y or N.")
+                    else:
+                        if user_input == 'y':
+                            print("You said YES. The title you inputted has been recorded.")
+                        else:
+                            print("You said NO. Please enter a different title.")
+                        break
+                
+                if user_input == 'y':
+                    break
+
+        # If book is a new book, exit while loop
+        else:
+            break
+
+    return title
 
 def author_input():
 	'''
@@ -383,11 +402,18 @@ Once you are done, type in 'd' and press Enter.")
         if not genre:
             print("Sorry, you did not enter a genre of the book.")
         elif genre.lower() == 'd':
-            break
+            # Checks if the user has entered at least 1 genre, if not
+            # while loop continues
+            if genres:
+                return genres
+            else:
+                print("Sorry, you did not enter any genre(s) for this book.\
+Please enter at least 1 genre.")
+                genre_counter = 0
         else:
             genres.append(genre)
-
-    return genres
+        
+        
 
 def tags_input():
     '''
@@ -408,11 +434,16 @@ Enter ONE tag at a time. Once you are done, type in 'd' and press Enter.")
         if not tag:
             print("Sorry, you did not enter a tag for the book.")
         elif tag.lower() == 'd':
-            break
+            # Checks if the user has entered at least 1 tag, if not
+            # while loop continues
+            if tags:
+                return tags
+            else:
+                print("Sorry, you did not enter any tag(s) for this book.\
+Please enter at least 1 tag.")
+                tag_counter = 0
         else:
             tags.append(tag)
-
-    return tags
 
 def new_book():
     '''
@@ -430,15 +461,21 @@ def new_book():
 
         # Asks user if the book is part of a series, and if it is,
         # asks user to input the series name
-        # Any character besides "y" or "Y" is considered "No"
-        user_input = input('''Is this book part of a series?
+        while True:
+            try:
+                user_input = input('''Is this book part of a series?
         (Y) Yes
         (N) No
 Y or N: ''').lower()
-        if user_input == 'y':
-            series = series_input()
-        else:
-            series = None
+                assert user_input.lower() == 'y' or user_input.lower() == 'n'
+            except AssertionError:
+                print("Error, please enter Y or N.")
+            else:
+                if user_input == 'y':
+                    series = series_input()
+                else:
+                    series = None
+                break
         
         # Asks the user for the genres and tags
         genres = genres_input()
@@ -461,6 +498,8 @@ Y or N: ''').lower()
                 tags_str += tag + ', '
 
         # Asks the user to confirm that the inputted info is correct
+        print()
+        print()
         print("Is this correct?")
         print()
         print("Title:", title)
@@ -490,15 +529,37 @@ booklist = []
 ### TEST CODE ###
 title = 'Six of Crows'
 author = 'Leigh Bardugo'
-rating = '5'
+rating = 5
 genres = ['YA', 'Fantasy']
 tags = ['kaz brekker', 'inej ghafa', 'ketterdam']
 series = 'Six of Crows Duology'
 soc_obj = Book(title, author, rating, genres, tags, series)
-# print(soc_obj)
+booklist.append(soc_obj)
 
-new_book()
-print("Enter book #2")
-new_book()
+title = 'Crooked Kingdom'
+author = 'Leigh Bardugo'
+rating = 4
+genres = ['YA', 'Fantasy']
+tags = ['kaz brekker']
+series = 'Six of Crows Duology'
+ck_obj = Book(title, author, rating, genres, tags, series)
+booklist.append(ck_obj)
+
+title = 'Heartless'
+author = 'Marissa Meyer'
+rating = 3
+genres = ['YA', 'Fantasy', 'Romance']
+tags = ['alice', 'in', 'wonderland']
+series = None
+hl_obj = Book(title, author, rating, genres, tags, series)
+booklist.append(hl_obj)
+
+
 for book in booklist:
     print(book)
+
+print(Book.titles)
+print(Book.authors)
+print(Book.genres)
+print(Book.tags)
+print(Book.series)
