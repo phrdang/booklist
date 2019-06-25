@@ -76,6 +76,10 @@ class Book(object):
     genres = []
     tags = []
     series = []
+
+    booklist = {}
+
+    series_dict = {}
     
     def __init__(self, title, author, rating, genres, tags, series):
         '''
@@ -85,6 +89,7 @@ class Book(object):
         rating: int from 1-5
         series: default is None, otherwise str
         '''
+        # Saves the user's input with original letter case
         self.title = title
         self.author = author
         self.rating = rating
@@ -92,9 +97,27 @@ class Book(object):
         self.tags = tags
         self.series = series
 
+        # Unique ID for each book
         Book.id += 1
         self.id = Book.id
 
+        # Saves the user's input except converts it to
+        # lower case (only for data types where .lower()
+        # works) for case-insensitive searching later on
+        self.low_title = title.lower()
+        self.low_author = author.lower() 
+        self.low_genres = []
+        self.low_tags = []
+        self.low_series = series.lower()
+
+        for genre in genres:
+            self.low_genres.append(genre.lower())
+        
+        for tag in tags:
+            self.low_tags.append(tag.lower())
+
+        # Saves user's input (lowercase) into Book class variables
+        # Duplicates are not added
         if title.lower() not in Book.titles:
             Book.titles.append(title.lower())
         
@@ -112,6 +135,51 @@ class Book(object):
         if series != None and series.lower() not in Book.series:
             Book.series.append(series.lower())
 
+        if series.lower() not in Book.series_dict.keys():
+            Book.series_dict[series.lower()] = [self.title, self.low_title]
+        
+        # Adds all of the book's information onto the Book List
+        Book.booklist[self.low_title] = [self.title, [self.author, self.low_author], rating, \
+            [self.genres, self.low_genres], [self.tags, self.low_tags], [self.series, self.low_series], self.id]
+
+        '''
+        Example Book List dict retrieval:
+
+        Book.booklist['six of crows'] == ['Six of Crows', ['Leigh Bardugo', 'leigh bardugo'], 5, \
+            [['YA', 'fantasy'], ['ya', 'fantasy']], [['Kaz', 'Inej', 'Ketterdam'], ['kaz', 'inej', 'ketterdam']], \
+                ['Six of Crows Duology', 'six of crows duology'], 1]
+        
+        TITLE (ORIGINAL)
+        Book.booklist['six of crows'][0] == 'Six of Crows'
+
+        AUTHOR (ORIGINAL, LOWER)
+        Book.booklist['six of crows'][1] == ['Leigh Bardugo', 'leigh bardugo']
+
+        RATING
+        Book.booklist['six of crows'][2] == 5
+
+        GENRES (ORIGINAL, LOWER)
+        Book.booklist['six of crows'][3] == [['YA', 'fantasy'], ['ya', 'fantasy']]
+
+        TAGS (ORIGINAL, LOWER)
+        Book.booklist['six of crows'][4] == [['Kaz', 'Inej', 'Ketterdam'], ['kaz', 'inej', 'ketterdam']]
+
+        SERIES (ORIGINAL, LOWER) 
+        Book.booklist['six of crows'][5] == ['Six of Crows Duology', 'six of crows duology']
+
+        ID 
+        Book.booklist['six of crows'][6] == 1
+        '''
+
+        # Add book to its series_dict if it belongs to a series
+        if self.series != None:
+            # If the series is not a key in the dict, create it
+            if self.low_series not in Book.series_dict.keys:
+                Book.series_dict[self.low_series] = [self.title]
+            # Else, if the series already exists, add the new book to the series
+            else:
+                Book.series_dict[self.low_series].append(self.title)
+                
     def __str__(self):
         # First line of info prints the title, author, and rating
         first = 'Title: %s | Author: %s | Rating: %s' % (self.title, self.author, self.rating)
@@ -524,9 +592,10 @@ Y or N: ''').lower()
         else:
             print("Please enter your information again.")
 
-booklist = []
-
 ### TEST CODE ###
+
+# booklist = []
+
 title = 'Six of Crows'
 author = 'Leigh Bardugo'
 rating = 5
